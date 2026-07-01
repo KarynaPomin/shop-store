@@ -1,0 +1,153 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #121212;
+  background: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --surface: #ffffff;
+  --surface-2: #f7f7f4;
+  --text: #101010;
+  --muted: #696b70;
+  --line: #e6e3dd;
+  --tile: #e8e8e4;
+  --blue: #4f90b2;
+  --sale: #1e8f4f;
+  --shadow: 0 24px 70px rgba(20, 28, 35, 0.14);
+  --icon-filter: none;
+}
+
+:root[data-theme='dark'] {
+  color: #f6f3ed;
+  background: #111315;
+  --surface: #111315;
+  --surface-2: #1a1e21;
+  --text: #f6f3ed;
+  --muted: #a9adb2;
+  --line: #2e3337;
+  --tile: #23282c;
+  --blue: #4a88a8;
+  --sale: #6fd28b;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+  --icon-filter: invert(1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.buttonLight {
+  background: #e8e8e8;
+  color: #151515;
+}
+
+.buttonDark {
+  background: #020202;
+  color: #ffffff;
+}
+
+.state-page,
+.content-page {
+  display: grid;
+  max-width: 760px;
+  min-height: 55vh;
+  align-content: center;
+  gap: 16px;
+  margin: 0 auto;
+  padding: 72px 24px;
+  text-align: center;
+}
+
+.state-page svg {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+}
+
+.state-page h1,
+.content-page h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+  line-height: 1;
+}
+
+.content-page p {
+  color: var(--muted);
+  font-size: 1.12rem;
+  line-height: 1.7;
+}
+
+.contact-form {
+  display: grid;
+  gap: 16px;
+  text-align: left;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 850;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

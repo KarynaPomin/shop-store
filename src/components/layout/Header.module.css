@@ -1,0 +1,146 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 22px;
+  padding: 18px clamp(18px, 5vw, 64px);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.logo {
+  color: var(--text);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.desktopNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+}
+
+.desktopNav a,
+.mobileNav a {
+  color: var(--text);
+  font-weight: 650;
+  font-size: 0.95rem;
+}
+
+.navItem {
+  position: relative;
+  padding-block: 10px;
+}
+
+.mega {
+  position: absolute;
+  top: 42px;
+  left: 50%;
+  min-width: 245px;
+  padding: 28px 34px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+}
+
+.mega h3 {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.mega a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+}
+
+.mega img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: var(--icon-filter);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actions button,
+.actions a {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.actions svg {
+  width: 21px;
+  height: 21px;
+}
+
+.cart span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  min-width: 16px;
+  height: 16px;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--surface);
+  font-size: 0.68rem;
+}
+
+.mobileToggle,
+.mobileNav {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .desktopNav {
+    display: none;
+  }
+
+  .mobileToggle {
+    display: inline-grid;
+  }
+
+  .mobileNav {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 16px;
+    overflow: hidden;
+    padding-top: 18px;
+  }
+
+  .navItem {
+    padding: 0;
+  }
+
+  .mega {
+    display: none;
+  }
+}

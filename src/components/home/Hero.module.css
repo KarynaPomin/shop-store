@@ -1,0 +1,80 @@
+.hero {
+  position: relative;
+  min-height: min(640px, calc(100vh - 120px));
+  margin: 0 clamp(14px, 2vw, 18px) 70px;
+  overflow: hidden;
+  border-radius: 34px;
+  background: var(--blue);
+}
+
+.hero video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(62, 112, 145, 0.94) 0%, rgba(62, 112, 145, 0.7) 38%, rgba(62, 112, 145, 0.2) 100%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.08), transparent);
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  padding: clamp(80px, 14vw, 190px) clamp(28px, 6vw, 74px);
+  color: #fff;
+}
+
+.copy span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+  opacity: 0.82;
+}
+
+.copy h1 {
+  max-width: 410px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.2rem, 5vw, 4.3rem);
+  line-height: 0.95;
+}
+
+.copy p {
+  max-width: 430px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.copy div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 28px;
+}
+
+.play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 800;
+}
+
+@media (max-width: 680px) {
+  .hero {
+    min-height: 560px;
+    border-radius: 24px;
+  }
+
+  .overlay {
+    background: linear-gradient(180deg, rgba(62, 112, 145, 0.9), rgba(62, 112, 145, 0.72));
+  }
+}

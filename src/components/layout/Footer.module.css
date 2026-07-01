@@ -1,0 +1,46 @@
+.footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+  padding: 96px clamp(24px, 6vw, 72px) 36px;
+}
+
+.footer div {
+  display: grid;
+  justify-content: center;
+  gap: 5px;
+}
+
+.footer h3 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+}
+
+.footer a {
+  color: var(--text);
+}
+
+.social span {
+  display: flex;
+  gap: 14px;
+}
+
+.legal,
+.footer strong {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.legal {
+  margin: 44px 0 0;
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+
+@media (max-width: 720px) {
+  .footer {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 62px;
+  }
+}

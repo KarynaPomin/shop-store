@@ -1,0 +1,80 @@
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px;
+}
+
+.page h1 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 34px;
+}
+
+.form,
+.summary {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 850;
+}
+
+.form input:not([type='radio']) {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.form span {
+  color: var(--sale);
+  font-size: 0.9rem;
+}
+
+.options {
+  display: grid;
+  gap: 12px;
+}
+
+.options label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.summary {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.summary p {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.total {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 1.25rem;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
