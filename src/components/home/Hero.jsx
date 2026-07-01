@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlined';
+import { homeHero } from '../../data/catalog.js';
 import styles from './Hero.module.css';
 
 export default function Hero() {
   return (
-    <section className={styles.hero}>
-      <video autoPlay muted loop playsInline src="/assets/videos/8387364-uhd_4096_2160_25fps.mp4" />
-      <div className={styles.overlay} />
+    <section className={styles.hero} style={{ backgroundColor: homeHero.tone }}>
       <motion.div
         className={styles.copy}
         initial={{ opacity: 0, y: 24 }}
@@ -22,6 +21,14 @@ export default function Hero() {
           <a href="#deals" className={styles.play}><PlayCircleOutlineIcon /> Hot deals</a>
         </div>
       </motion.div>
+      <motion.img
+        className={styles.heroImage}
+        src={homeHero.image}
+        alt="Shop Store home banner"
+        initial={{ opacity: 0, x: 44 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.55, delay: 0.1 }}
+      />
     </section>
   );
 }

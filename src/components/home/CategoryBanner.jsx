@@ -4,24 +4,20 @@ import { Link } from 'react-router-dom';
 import { categories } from '../../data/catalog.js';
 import styles from './CategoryBanner.module.css';
 
-export default function CategoryBanner() {
-  const [active, setActive] = useState('woman');
-  const category = categories[active];
+export default function CategoryBanner({ activeCategory = 'woman' }) {
+  const safeDefault = categories?.woman ? 'woman' : Object.keys(categories)[0];
+
+  const [active, setActive] = useState(
+    categories?.[activeCategory] ? activeCategory : safeDefault
+  );
+
+  const category = categories?.[active];
+
+  if (!category) return null;
 
   return (
     <section className={styles.section}>
-      <div className={styles.tabs}>
-        {Object.entries(categories).map(([key, item]) => (
-          <button
-            key={key}
-            className={active === key ? styles.active : ''}
-            onClick={() => setActive(key)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-      <motion.div
+      <div
         className={styles.banner}
         style={{ backgroundColor: category.tone }}
         key={active}
@@ -29,12 +25,12 @@ export default function CategoryBanner() {
         animate={{ opacity: 1 }}
       >
         <div>
-          <span>Clothes from</span>
-          <h2>Elegant Look Of Clothes That Shines</h2>
+          <span>Clothes fow</span>
+          <h2>{category.label}</h2>
           <Link to={`/category/${active}`} className="button buttonLight">Explore now</Link>
         </div>
         <img src={category.hero} alt={`${category.label} banner`} />
-      </motion.div>
+      </div>
     </section>
   );
 }

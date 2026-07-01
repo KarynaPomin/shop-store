@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -52,6 +53,7 @@ export default function Header() {
   const { state } = useStore();
   const { theme, toggleTheme } = useTheme();
   const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  const likedCount = state.wishlist.length;
 
   const nav = (
     <>
@@ -69,8 +71,6 @@ export default function Header() {
       ))}
       <NavLink to="/sale">Sale</NavLink>
       <NavLink to="/about">About</NavLink>
-      <NavLink to="/contact">Contact Us</NavLink>
-      <NavLink to="/admin">Admin</NavLink>
     </>
   );
 
@@ -81,7 +81,10 @@ export default function Header() {
       <div className={styles.actions}>
         <Link to="/account" aria-label="Account"><PersonOutlineIcon /></Link>
         <button aria-label="Search"><SearchIcon /></button>
-        <Link to="/cart" aria-label="Shopping bag"><ShoppingBagOutlinedIcon /></Link>
+        <Link className={styles.badgedIcon} to="/wishlist" aria-label="Liked clothes">
+          <FavoriteBorderIcon />
+          {likedCount > 0 && <span>{likedCount}</span>}
+        </Link>
         <Link className={styles.cart} to="/cart" aria-label="Cart">
           <ShoppingCartOutlinedIcon />
           {count > 0 && <span>{count}</span>}

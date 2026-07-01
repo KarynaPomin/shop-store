@@ -1,5 +1,10 @@
 export const asset = (path) => `/assets/${path}`;
 
+export const homeHero = {
+  image: asset('photos/without_bg/baner-1.png'),
+  tone: '#4f90b2',
+};
+
 export const categories = {
   woman: {
     label: 'Woman',

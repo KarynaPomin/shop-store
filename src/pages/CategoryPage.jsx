@@ -21,7 +21,7 @@ export default function CategoryPage({ collection }) {
   return (
     <Page>
       <Seo title={title} description={`${title} clothing and accessories from Shop Store.`} />
-      <CategoryBanner />
+      {current && <CategoryBanner activeCategory={current} />}
       <ProductGrid
         products={filtered}
         title={title}
