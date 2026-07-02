@@ -5,11 +5,33 @@ import Hero from '../components/home/Hero.jsx';
 import CategoryShowcase from '../components/home/CategoryShowcase.jsx';
 import CategoryBanner from '../components/home/CategoryBanner.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
-import { products } from '../data/catalog.js';
 import styles from './Home.module.css';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Home() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(process.env.REACT_APP_API_URL + "/products?populate=images", {
+          headers: {
+            Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
+          }
+        });
+
+        console.log(res);
+        setProducts(res.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Page>
       <Seo title="Home" description="Modern clothing shop portfolio homepage with curated collections and hot deals." />

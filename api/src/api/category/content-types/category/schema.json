@@ -11,13 +11,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
+    "label": {
       "type": "string"
     },
-    "desc": {
-      "type": "text"
-    },
-    "img": {
+    "hero": {
       "type": "media",
       "multiple": false,
       "allowedTypes": [
@@ -38,6 +35,19 @@
       "relation": "manyToMany",
       "target": "api::sub-category.sub-category",
       "inversedBy": "categories"
+    },
+    "cardImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "tone": {
+      "type": "string"
     }
   }
 }

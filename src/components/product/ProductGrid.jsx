@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard.jsx';
 import styles from './ProductGrid.module.css';
+import axios from 'axios';
 
 export default function ProductGrid({ current, products, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
   return (
