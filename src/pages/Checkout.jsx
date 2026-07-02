@@ -20,12 +20,39 @@ const schema = z.object({
 export default function Checkout() {
   const navigate = useNavigate();
   const { state, total, dispatch } = useStore();
+  const session = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('shop-session')) || { loggedIn: false, email: '' };
+    } catch {
+      return { loggedIn: false, email: '' };
+    }
+  })();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { delivery: 'standard', payment: 'cash' },
+    defaultValues: { delivery: 'standard', payment: 'cash', email: session.email || '' },
   });
 
-  const onSubmit = () => {
+  const onSubmit = (data) => {
+    const order = {
+      id: `ORD-${Date.now().toString().slice(-6)}`,
+      type: session.loggedIn ? 'account' : 'guest',
+      email: data.email,
+      name: data.name,
+      delivery: data.delivery,
+      payment: data.payment,
+      total,
+      items: state.cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        size: item.size,
+        color: item.color,
+        price: item.salePrice || item.price,
+      })),
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem('shop-last-order', JSON.stringify(order));
     dispatch({ type: 'CLEAR_CART' });
     navigate('/confirmation');
   };
@@ -36,6 +63,14 @@ export default function Checkout() {
       <h1>Checkout</h1>
       <form className={styles.layout} onSubmit={handleSubmit(onSubmit)}>
         <section className={styles.form}>
+          <div className={styles.checkoutMode}>
+            <strong>{session.loggedIn ? 'Account checkout' : 'Guest checkout'}</strong>
+            <p>
+              {session.loggedIn
+                ? `You are ordering as ${session.email}.`
+                : 'No account needed. Use your email to receive order updates.'}
+            </p>
+          </div>
           <h2>Shipping address</h2>
           {[
             ['name', 'Full name'],
