@@ -95,7 +95,8 @@
   height: 21px;
 }
 
-.cart span {
+.cart span,
+.badgedIcon span {
   position: absolute;
   top: 0;
   right: 0;
@@ -110,7 +111,7 @@
   font-size: 0.68rem;
 }
 
-.mobileToggle,
+.actions .mobileToggle,
 .mobileNav {
   display: none;
 }
@@ -124,7 +125,7 @@
     display: none;
   }
 
-  .mobileToggle {
+  .actions .mobileToggle {
     display: inline-grid;
   }
 

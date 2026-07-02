@@ -27,7 +27,7 @@ export default function CategoryBanner({ activeCategory = 'woman' }) {
         <div>
           <span>Clothes fow</span>
           <h2>{category.label}</h2>
-          <Link to={`/category/${active}`} className="button buttonLight">Explore now</Link>
+          <a href={`#section-${active}`} className="button buttonLight">Explore now</a>
         </div>
         <img src={category.hero} alt={`${category.label} banner`} />
       </div>

@@ -23,6 +23,7 @@ export default function CategoryPage({ collection }) {
       <Seo title={title} description={`${title} clothing and accessories from Shop Store.`} />
       {current && <CategoryBanner activeCategory={current} />}
       <ProductGrid
+        current={current}
         products={filtered}
         title={title}
         subtitle="Browse refined everyday pieces with mock stock, color and size data ready for a backend."
