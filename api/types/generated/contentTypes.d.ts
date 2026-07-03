@@ -463,7 +463,6 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       'api::category.category'
     > &
       Schema.Attribute.Private;
-    products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
     sub_categories: Schema.Attribute.Relation<
       'manyToMany',
@@ -489,7 +488,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   attributes: {
     brand: Schema.Attribute.String;
     categories: Schema.Attribute.Relation<
-      'manyToMany',
+      'oneToMany',
       'api::category.category'
     >;
     colors: Schema.Attribute.String;

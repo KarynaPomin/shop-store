@@ -24,18 +24,6 @@
         "audios"
       ]
     },
-    "products": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::product.product",
-      "inversedBy": "categories"
-    },
-    "sub_categories": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::sub-category.sub-category",
-      "inversedBy": "categories"
-    },
     "cardImage": {
       "type": "media",
       "multiple": false,
@@ -48,6 +36,12 @@
     },
     "tone": {
       "type": "string"
+    },
+    "sub_categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::sub-category.sub-category",
+      "inversedBy": "categories"
     }
   }
 }

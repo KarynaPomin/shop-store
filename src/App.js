@@ -22,23 +22,23 @@ function AppRoutes() {
 
   return (
     <Routes location={location} key={location.pathname}>
-            <Route element={<AppLayout />}>
-              <Route index element={<Home />} />
-              <Route path="/category/:slug" element={<CategoryPage />} />
-              <Route path="/new" element={<CategoryPage collection="new" />} />
-              <Route path="/sale" element={<CategoryPage collection="sale" />} />
-              <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/confirmation" element={<Confirmation />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<Home />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/new" element={<CategoryPage collection="new" />} />
+        <Route path="/sale" element={<CategoryPage collection="sale" />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/confirmation" element={<Confirmation />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   );
 }
 

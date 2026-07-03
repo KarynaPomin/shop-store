@@ -12,7 +12,7 @@ import axios from 'axios';
 export default function ProductCard({ product }) {
   const { state, dispatch } = useStore();
   const wished = state.wishlist.includes(product.id);
-  const baseUrl = process.env.REACT_APP_API_URL.replace('/api', '');
+  const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 
   return (
     <motion.article className={styles.card} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
@@ -32,7 +32,7 @@ export default function ProductCard({ product }) {
         )}
       </Link>
       <div className={styles.info}>
-        <span>{product.type}</span>
+        <span>{product.name}</span>
         <button onClick={() => dispatch({ type: 'TOGGLE_WISHLIST', id: product.id })} aria-label="Toggle favorite">
           {wished ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </button>

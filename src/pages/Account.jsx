@@ -50,7 +50,7 @@ export default function Account() {
   );
 
   const updateAccount = (field, value) => {
-    setAccount((current) => ({ ...current, [field]: value }));
+    setAccount((category) => ({ ...category, [field]: value }));
     setSaved('');
   };
 

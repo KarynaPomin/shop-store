@@ -8,22 +8,22 @@ import { categories, products } from '../data/catalog.js';
 
 export default function CategoryPage({ collection }) {
   const { slug } = useParams();
-  const current = slug && categories[slug] ? slug : null;
+  const category = slug && categories[slug] ? slug : null;
   const filtered = useMemo(() => {
     if (collection === 'sale') return products.filter((product) => product.salePrice);
     if (collection === 'new') return products.slice(0, 6);
-    if (current) return products.filter((product) => product.category === current);
+    if (category) return products.filter((product) => product.category === category);
     return products;
-  }, [collection, current]);
+  }, [collection, category]);
 
-  const title = collection === 'sale' ? 'Sale' : collection === 'new' ? 'New Collection' : categories[current]?.label || 'Collection';
+  const title = collection === 'sale' ? 'Sale' : collection === 'new' ? 'New Collection' : categories[category]?.label || 'Collection';
 
   return (
     <Page>
       <Seo title={title} description={`${title} clothing and accessories from Shop Store.`} />
-      {current && <CategoryBanner activeCategory={current} />}
+      {category && <CategoryBanner activeCategory={category} />}
       <ProductGrid
-        current={current}
+        category={category}
         products={filtered}
         title={title}
         subtitle="Browse refined everyday pieces with mock stock, color and size data ready for a backend."

@@ -22,9 +22,8 @@
     },
     "categories": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::category.category",
-      "mappedBy": "products"
+      "relation": "oneToMany",
+      "target": "api::category.category"
     },
     "type": {
       "type": "enumeration",

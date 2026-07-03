@@ -16,7 +16,10 @@ export default function CategoryShowcase() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ delay: index * 0.08 }}
         >
-          <Link to={`/category/${key}`}>
+          <Link 
+            to={`/category/${key}`}
+            onClick={() => window.scrollTo(0, 0)}
+          >
             <h2>For<br />{category.label}</h2>
             <img src={category.cardImage} alt={`${category.label} collection`} />
           </Link>
