@@ -24,7 +24,7 @@ function AppRoutes() {
     <Routes location={location} key={location.pathname}>
       <Route element={<AppLayout />}>
         <Route index element={<Home />} />
-        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/category/:category/:sub?" element={<CategoryPage />} />
         <Route path="/new" element={<CategoryPage collection="new" />} />
         <Route path="/sale" element={<CategoryPage collection="sale" />} />
         <Route path="/product/:id" element={<ProductPage />} />

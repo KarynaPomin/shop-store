@@ -25,7 +25,7 @@ export default function CategoryBanner({ activeCategory = 'woman' }) {
         animate={{ opacity: 1 }}
       >
         <div>
-          <span>Clothes fow</span>
+          <span>Clothes for</span>
           <h2>{category.label}</h2>
           <a href={`#section-${active}`} className="button buttonLight">Explore now</a>
         </div>

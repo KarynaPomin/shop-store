@@ -5,15 +5,22 @@ import styles_app from '../../App.module.css';
 import axios from 'axios';
 import useFetch from '../../hooks/useFetch.js';
 
-export default function ProductGrid({ category, type, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
+export default function ProductGrid({ category, subCategory, collection, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
   let endpoint = "products?populate=*";
 
-  if (category && type) {
-    endpoint += `&filters[categories][label][$eq]=${category}&filters[type][$eq]=${type}`;
+  if (collection === "new") {
+    endpoint += `&filters[isNew][$eq]=true`;
+  }
+  else if (collection === "sale") {
+    endpoint += "&filters[salePrice][$notNull]=true";
+  }
+  else if (category && subCategory) {
+    endpoint += `&filters[categories][label][$eq]=${category}`;
+    endpoint += `&filters[sub_categories][title][$eq]=${subCategory}`;
   } else if (category) {
     endpoint += `&filters[categories][label][$eq]=${category}`;
-  } else if (type) {
-    endpoint += `&filters[type][$eq]=${type}`;
+  } else if (subCategory) {
+    endpoint += `&filters[sub_categories][title][$eq]=${subCategory}`;
   }
 
   const { data, loading, error } = useFetch(endpoint);
@@ -21,7 +28,6 @@ export default function ProductGrid({ category, type, title = 'New Arrivals', su
   const [isEmpty, setIsEmpty] = useState(false);
   useEffect(() => {
     setIsEmpty(Array.isArray(data) && data.length === 0);
-    console.log(data);
   }, [data]);
 
   return (

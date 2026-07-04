@@ -4,19 +4,19 @@ import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import CategoryBanner from '../components/home/CategoryBanner.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
-import { categories, products } from '../data/catalog.js';
+import useFetch from '../hooks/useFetch.js';
 
 export default function CategoryPage({ collection }) {
-  const { slug } = useParams();
-  const category = slug && categories[slug] ? slug : null;
-  const filtered = useMemo(() => {
-    if (collection === 'sale') return products.filter((product) => product.salePrice);
-    if (collection === 'new') return products.slice(0, 6);
-    if (category) return products.filter((product) => product.category === category);
-    return products;
-  }, [collection, category]);
-
-  const title = collection === 'sale' ? 'Sale' : collection === 'new' ? 'New Collection' : categories[category]?.label || 'Collection';
+  const { category, sub } = useParams();
+  
+  const title = 
+    collection === 'sale' 
+    ? 'Sale' 
+    : collection === 'new' 
+    ? 'New Collection' 
+    : category
+      ? category.charAt(0).toUpperCase() + category.slice(1)
+      : "Collection";
 
   return (
     <Page>
@@ -24,7 +24,8 @@ export default function CategoryPage({ collection }) {
       {category && <CategoryBanner activeCategory={category} />}
       <ProductGrid
         category={category}
-        products={filtered}
+        subCategory={sub}
+        collection={collection}
         title={title}
         subtitle="Browse refined everyday pieces with mock stock, color and size data ready for a backend."
       />

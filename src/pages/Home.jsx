@@ -16,7 +16,7 @@ export default function Home() {
       <Seo title="Home" description="Modern clothing shop portfolio homepage with curated collections and hot deals." />
       <Hero />
       <CategoryShowcase />
-      <ProductGrid type="trending" />
+      <ProductGrid collection="new" />
       <section id="deals" className={styles.deals}>
         <video
           autoPlay

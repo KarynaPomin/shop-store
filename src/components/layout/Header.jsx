@@ -14,6 +14,7 @@ import { categories, asset } from '../../data/catalog.js';
 import { useStore } from '../../context/StoreContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
 import styles from './Header.module.css';
+import useFetch from '../../hooks/useFetch.js';
 
 const menuIcons = {
   'Show full catalog': asset('icons/categorise.png'),
@@ -25,8 +26,12 @@ const menuIcons = {
   Sweatpants: asset('icons/soccer-jersey.png'),
 };
 
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function MegaMenu({ category }) {
-  const data = categories[category];
+  if (!category) return null;
 
   return (
     <motion.div
@@ -36,11 +41,11 @@ function MegaMenu({ category }) {
       exit={{ opacity: 0, y: 10, scale: 0.98 }}
       transition={{ duration: 0.2 }}
     >
-      <h3>{data.label}</h3>
-      {data.menu.map((item) => (
-        <Link key={item} to={`/category/${category}`}>
-          {menuIcons[item] && <img src={menuIcons[item]} alt="" />}
-          <span>{item}</span>
+      <h3>{capitalizeFirstLetter(category.label)}</h3>
+      {category?.sub_categories.map((item) => (
+        <Link key={item.id} to={`/category/${category.label}/${item.title}`}>
+          {menuIcons[item.title] && <img src={menuIcons[item]} alt="" />}
+          <span>{capitalizeFirstLetter(item.title)}</span>
         </Link>
       ))}
     </motion.div>
@@ -55,18 +60,27 @@ export default function Header() {
   const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const likedCount = state.wishlist.length;
 
+  const { data, loading, error } = useFetch("categories?populate=*");
+
   const nav = (
     <>
       <NavLink to="/new">New</NavLink>
-      {Object.keys(categories).map((key) => (
+      {data?.map((category) => (
         <div
+          key={category.id}
           className={styles.navItem}
-          key={key}
-          onMouseEnter={() => setOpenMenu(key)}
+          onMouseEnter={() => setOpenMenu(category.id)}
           onMouseLeave={() => setOpenMenu(null)}
         >
-          <NavLink to={`/category/${key}`}>{categories[key].label}</NavLink>
-          <AnimatePresence>{openMenu === key && <MegaMenu category={key} />}</AnimatePresence>
+          <NavLink to={`/category/${category.label}`}>
+            {capitalizeFirstLetter(category.label)}
+          </NavLink>
+
+          <AnimatePresence>
+            {openMenu === category.id && (
+              <MegaMenu category={category} />
+            )}
+          </AnimatePresence>
         </div>
       ))}
       <NavLink to="/sale">Sale</NavLink>
