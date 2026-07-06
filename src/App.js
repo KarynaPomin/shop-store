@@ -1,9 +1,9 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import AppLayout from './layouts/AppLayout.jsx';
+import { lazy, Suspense } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import Loader from './components/common/Loader.jsx';
+import AppLayout from './layouts/AppLayout.jsx';
 
 const Home = lazy(() => import('./pages/Home.jsx'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));

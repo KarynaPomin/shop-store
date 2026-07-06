@@ -1,6 +1,6 @@
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlined';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlined';
 import { homeHero } from '../../data/catalog.js';
 import styles from './Hero.module.css';
 

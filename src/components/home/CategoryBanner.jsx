@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { categories } from '../../data/catalog.js';
 import styles from './CategoryBanner.module.css';
 

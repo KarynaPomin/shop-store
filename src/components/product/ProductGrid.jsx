@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
+import styles_app from '../../App.module.css';
+import useFetch from '../../hooks/useFetch.js';
 import ProductCard from './ProductCard.jsx';
 import styles from './ProductGrid.module.css';
-import styles_app from '../../App.module.css';
-import axios from 'axios';
-import useFetch from '../../hooks/useFetch.js';
 
 export default function ProductGrid({ products, category, subCategory, collection, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
   

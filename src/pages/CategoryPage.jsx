@@ -1,10 +1,8 @@
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import CategoryBanner from '../components/home/CategoryBanner.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
-import useFetch from '../hooks/useFetch.js';
 
 export default function CategoryPage({ collection }) {
   const { category, sub } = useParams();

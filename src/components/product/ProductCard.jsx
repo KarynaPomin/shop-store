@@ -1,13 +1,11 @@
-import { Link } from 'react-router-dom';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext.jsx';
 import { currency } from '../../utils/format.js';
 import styles from './ProductCard.module.css';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 
 const renderStars = (rating) => {
   return Array.from({ length: 5 }, (_, i) => {

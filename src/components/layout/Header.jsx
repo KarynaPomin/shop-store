@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
-import SearchIcon from '@mui/icons-material/Search';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import { categories, asset } from '../../data/catalog.js';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
-import styles from './Header.module.css';
+import { asset } from '../../data/catalog.js';
 import useFetch from '../../hooks/useFetch.js';
+import styles from './Header.module.css';
 
 const menuIcons = {
   'Show full catalog': asset('icons/categorise.png'),

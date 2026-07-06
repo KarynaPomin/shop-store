@@ -1,14 +1,10 @@
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { motion } from 'framer-motion';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
-import Hero from '../components/home/Hero.jsx';
 import CategoryShowcase from '../components/home/CategoryShowcase.jsx';
-import CategoryBanner from '../components/home/CategoryBanner.jsx';
+import Hero from '../components/home/Hero.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 import styles from './Home.module.css';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import useFetch from '../hooks/useFetch.js';
 
 export default function Home() {
   return (

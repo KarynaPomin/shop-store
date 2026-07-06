@@ -1,21 +1,21 @@
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import StarIcon from '@mui/icons-material/Star';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import StarIcon from '@mui/icons-material/Star';
 
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 
-import { reviews } from '../data/catalog.js';
 import { useStore } from '../context/StoreContext.jsx';
+import { reviews } from '../data/catalog.js';
+import useFetch from '../hooks/useFetch.js';
 import { currency } from '../utils/format.js';
 import styles from './ProductPage.module.css';
-import useFetch from '../hooks/useFetch.js';
 
 const handleShare = async () => {
   try {
@@ -172,7 +172,7 @@ export default function ProductPage() {
               ))}
             </div>
 
-            <a>Size guide</a>
+            <a href="#">Size guide</a>
           </fieldset>
 
           <label className={styles.qty}>

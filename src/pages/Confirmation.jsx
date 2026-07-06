@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
+import { Link } from 'react-router-dom';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import { currency } from '../utils/format.js';
