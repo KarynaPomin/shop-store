@@ -19,7 +19,7 @@ const schema = z.object({
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { state, total, dispatch } = useStore();
+  const { state, cartTotals, clearCart } = useStore();
   const session = (() => {
     try {
       return JSON.parse(localStorage.getItem('shop-session')) || { loggedIn: false, email: '' };
@@ -40,7 +40,7 @@ export default function Checkout() {
       name: data.name,
       delivery: data.delivery,
       payment: data.payment,
-      total,
+      total: cartTotals.total,
       items: state.cart.map((item) => ({
         id: item.id,
         name: item.name,
@@ -53,7 +53,7 @@ export default function Checkout() {
     };
 
     localStorage.setItem('shop-last-order', JSON.stringify(order));
-    dispatch({ type: 'CLEAR_CART' });
+    clearCart({ type: 'CLEAR_CART' });
     navigate('/confirmation');
   };
 
@@ -104,7 +104,7 @@ export default function Checkout() {
               <strong>{currency((item.salePrice || item.price) * item.quantity)}</strong>
             </p>
           ))}
-          <p className={styles.total}><span>Total</span><strong>{currency(total)}</strong></p>
+          <p className={styles.total}><span>Total</span><strong>{currency(cartTotals.total)}</strong></p>
           <button className="button buttonDark" type="submit">Confirm order</button>
         </aside>
       </form>

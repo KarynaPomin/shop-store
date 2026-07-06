@@ -5,7 +5,8 @@ import styles_app from '../../App.module.css';
 import axios from 'axios';
 import useFetch from '../../hooks/useFetch.js';
 
-export default function ProductGrid({ category, subCategory, collection, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
+export default function ProductGrid({ products, category, subCategory, collection, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
+  
   let endpoint = "products?populate=*";
 
   if (collection === "new") {
@@ -23,7 +24,11 @@ export default function ProductGrid({ category, subCategory, collection, title =
     endpoint += `&filters[sub_categories][title][$eq]=${subCategory}`;
   }
 
-  const { data, loading, error } = useFetch(endpoint);
+  const { data: productData, loading, error } = useFetch(endpoint);
+
+  const data = products ?? productData;
+  const isLoading = products ? false : loading;
+  const hasError = products ? null : error;
   
   const [isEmpty, setIsEmpty] = useState(false);
   useEffect(() => {
@@ -37,11 +42,11 @@ export default function ProductGrid({ category, subCategory, collection, title =
         <p>{subtitle}</p>
       </header>
       
-      {error ? (
+      {hasError ? (
         <div className={`${styles_app.state} ${styles_app.error}`}>
           Something went wrong.
         </div>
-      ) : loading ? (
+      ) : isLoading ? (
         <div className={`${styles_app.state} ${styles_app.loading}`}>
           Loading products...
         </div>

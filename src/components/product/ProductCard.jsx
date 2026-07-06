@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function ProductCard({ product }) {
-  const { state, dispatch } = useStore();
+  const { state, toggleWishlist } = useStore();
   const wished = state.wishlist.includes(product.id);
   const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 
@@ -33,7 +33,7 @@ export default function ProductCard({ product }) {
       </Link>
       <div className={styles.info}>
         <span>{product.name}</span>
-        <button onClick={() => dispatch({ type: 'TOGGLE_WISHLIST', id: product.id })} aria-label="Toggle favorite">
+        <button onClick={() => toggleWishlist(product.id)} aria-label="Toggle favorite">
           {wished ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </button>
         <Link to={`/product/${product.id}`}>{product.title}</Link>

@@ -8,22 +8,25 @@ import StarIcon from '@mui/icons-material/Star';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
-import { products, reviews } from '../data/catalog.js';
+import { reviews } from '../data/catalog.js';
 import { useStore } from '../context/StoreContext.jsx';
 import { currency } from '../utils/format.js';
 import styles from './ProductPage.module.css';
+import useFetch from '../hooks/useFetch.js';
 
 export default function ProductPage() {
+  const { data, loading, error } = useFetch("products?populate=*");
+
   const { id } = useParams();
-  const product = products.find((item) => item.id === id) || products[0];
+  const product = data.find((item) => item.id === Number(id));
   const [image, setImage] = useState(product.images[0]);
   const [size, setSize] = useState(product.sizes[1] || product.sizes[0]);
   const [color, setColor] = useState(product.colors[0]);
   const [quantity, setQuantity] = useState(1);
-  const { dispatch } = useStore();
+  const { addToCart, toggleWishlist } = useStore();
   const approvedReviews = reviews.filter((review) => review.productId === product.id && review.approved);
   const similar = useMemo(
-    () => products.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4),
+    () => data.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4),
     [product],
   );
 
@@ -84,11 +87,16 @@ export default function ProductPage() {
           <div className={styles.actions}>
             <button
               className="button buttonDark"
-              onClick={() => dispatch({ type: 'ADD_TO_CART', product, size, color, quantity })}
+              onClick={() => addToCart(product, size, color, quantity)}
             >
               <ShoppingBagOutlinedIcon /> Add to cart
             </button>
-            <button aria-label="Add to wishlist"><FavoriteBorderIcon /></button>
+            <button
+              aria-label="Add to wishlist"
+              onClick={() => toggleWishlist(product.id)}
+            >
+              <FavoriteBorderIcon />
+            </button>
             <button aria-label="Share"><ShareOutlinedIcon /></button>
           </div>
           <p className={styles.delivery}><LocalShippingOutlinedIcon /> Free delivery on orders over $120.0</p>
@@ -112,7 +120,7 @@ export default function ProductPage() {
           </article>
         ))}
       </section>
-      <ProductGrid products={similar.length ? similar : products.slice(0, 4)} title="Similar products" subtitle="More pieces from the same mood." />
+      <ProductGrid products={similar.length ? similar : data.slice(0, 4)} title="Similar products" subtitle="More pieces from the same mood." />
       <Link className={styles.back} to="/cart">View cart</Link>
     </Page>
   );

@@ -1,11 +1,14 @@
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
-import { orders, products, reviews } from '../data/catalog.js';
+import { orders, reviews } from '../data/catalog.js';
+import useFetch from '../hooks/useFetch.js';
 import styles from './Dashboard.module.css';
 
 export default function Admin() {
+  const { data, loading, error } = useFetch("products?populate=*");
+
   const cards = [
-    ['Products', products.length, 'Create, edit and delete mock products.'],
+    ['Products', data.length, 'Create, edit and delete mock products.'],
     ['Reviews waiting', reviews.filter((review) => !review.approved).length, 'Approve or delete customer reviews.'],
     ['Orders', orders.length, 'Manage order states and fulfillment.'],
     ['Banners', 4, 'Manage category and campaign banners.'],
@@ -26,7 +29,7 @@ export default function Admin() {
       </section>
       <section className={styles.table}>
         <h2>Product manager</h2>
-        {products.slice(0, 5).map((product) => (
+        {data.slice(0, 5).map((product) => (
           <div key={product.id}>
             <strong>{product.name}</strong>
             <span>{product.stock} in stock</span>

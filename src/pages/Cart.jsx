@@ -7,7 +7,13 @@ import { currency } from '../utils/format.js';
 import styles from './Cart.module.css';
 
 export default function Cart() {
-  const { state, dispatch, subtotal, discount, shipping, total } = useStore();
+  const {
+    state,
+    cartTotals,
+    updateQuantity,
+    removeFromCart,
+    setCoupon,
+  } = useStore();
 
   return (
     <Page className={styles.page}>
@@ -29,9 +35,11 @@ export default function Cart() {
                 type="number"
                 min="1"
                 value={item.quantity}
-                onChange={(event) => dispatch({ type: 'UPDATE_QUANTITY', index, quantity: Number(event.target.value) })}
+                onChange={(e) =>
+                  updateQuantity(item.cartId, Number(e.target.value))
+                }
               />
-              <button onClick={() => dispatch({ type: 'REMOVE_FROM_CART', index })} aria-label="Remove item">
+              <button onClick={() => removeFromCart(item.cartId)} aria-label="Remove item">
                 <DeleteOutlineIcon />
               </button>
             </article>
@@ -44,14 +52,18 @@ export default function Cart() {
             <input
               placeholder="Try STYLE10"
               value={state.coupon}
-              onChange={(event) => dispatch({ type: 'SET_COUPON', coupon: event.target.value })}
+              onChange={(e) => setCoupon(e.target.value)}
             />
           </label>
-          <p><span>Subtotal</span><strong>{currency(subtotal)}</strong></p>
-          <p><span>Discount</span><strong>-{currency(discount)}</strong></p>
-          <p><span>Shipping</span><strong>{shipping ? currency(shipping) : 'Free'}</strong></p>
+          <p><span>Subtotal</span><strong>{currency(cartTotals.subtotal)}</strong></p>
+          <p><span>Discount</span><strong>-{currency(cartTotals.discount)}</strong></p>
+          <p><span>Shipping</span><strong>{cartTotals.shipping
+                                            ? currency(cartTotals.shipping)
+                                            : 'Free'}
+                                            </strong>
+          </p>
           <p><span>Estimated delivery</span><strong>2-5 days</strong></p>
-          <p className={styles.total}><span>Total</span><strong>{currency(total)}</strong></p>
+          <p className={styles.total}><span>Total</span><strong>{currency(cartTotals.total)}</strong></p>
           <Link to="/checkout" className="button buttonDark">Checkout</Link>
           <Link to="/new" className="button buttonLight">Continue shopping</Link>
         </aside>

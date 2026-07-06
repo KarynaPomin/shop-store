@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
-import { orders, products } from '../data/catalog.js';
+import { orders } from '../data/catalog.js';
 import { useStore } from '../context/StoreContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import styles from './Dashboard.module.css';
+import useFetch from '../hooks/useFetch.js';
 
 const defaultAccount = {
   firstName: 'Karin',
@@ -36,6 +37,8 @@ function loadSession() {
 }
 
 export default function Account() {
+  const { data, loading, error } = useFetch("products?populate=*");
+
   const { state } = useStore();
   const { theme, setTheme } = useTheme();
   const [account, setAccount] = useState(loadAccount);
@@ -43,7 +46,9 @@ export default function Account() {
   const [loginEmail, setLoginEmail] = useState(() => loadSession().email || loadAccount().email);
   const [authMessage, setAuthMessage] = useState('');
   const [saved, setSaved] = useState('');
-  const wishlist = products.filter((product) => state.wishlist.includes(product.id));
+  const wishlist = (data || []).filter(product =>
+      state.wishlist.includes(product.id)
+  );
   const initials = useMemo(
     () => `${account.firstName.charAt(0)}${account.surname.charAt(0)}`.toUpperCase(),
     [account.firstName, account.surname],

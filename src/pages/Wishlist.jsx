@@ -2,12 +2,20 @@ import { Link } from 'react-router-dom';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
-import { products } from '../data/catalog.js';
 import { useStore } from '../context/StoreContext.jsx';
+import useFetch from '../hooks/useFetch.js';
 
 export default function Wishlist() {
   const { state } = useStore();
-  const likedProducts = products.filter((product) => state.wishlist.includes(product.id));
+
+  const { data, loading, error } = useFetch("products?populate=*");
+  console.log(data);
+  const likedProducts = (data || []).filter(product =>
+    state.wishlist.includes(product.id)
+  );
+
+  console.log(state.wishlist);
+  console.log("liked:", likedProducts);
 
   return (
     <Page className="content-page">
