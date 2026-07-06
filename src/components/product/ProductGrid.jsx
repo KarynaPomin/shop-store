@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import styles_app from '../../App.module.css';
 import useFetch from '../../hooks/useFetch.js';
 import ProductCard from './ProductCard.jsx';
@@ -28,11 +27,6 @@ export default function ProductGrid({ products, category, subCategory, collectio
   const data = products ?? productData;
   const isLoading = products ? false : loading;
   const hasError = products ? null : error;
-  
-  const [isEmpty, setIsEmpty] = useState(false);
-  useEffect(() => {
-    setIsEmpty(Array.isArray(data) && data.length === 0);
-  }, [data]);
 
   return (
     <section className={styles.section}  id={`section-${category}`}>

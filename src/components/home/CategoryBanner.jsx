@@ -1,13 +1,10 @@
-import { useState } from 'react';
 import { categories } from '../../data/catalog.js';
 import styles from './CategoryBanner.module.css';
 
 export default function CategoryBanner({ activeCategory = 'woman' }) {
   const safeDefault = categories?.woman ? 'woman' : Object.keys(categories)[0];
 
-  const [active, setActive] = useState(
-    categories?.[activeCategory] ? activeCategory : safeDefault
-  );
+  const active = categories?.[activeCategory] ? activeCategory : safeDefault;
 
   const category = categories?.[active];
 

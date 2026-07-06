@@ -37,7 +37,7 @@ function loadSession() {
 }
 
 export default function Account() {
-  const { data, loading, error } = useFetch("products?populate=*");
+  const { data } = useFetch("products?populate=*");
 
   const { state } = useStore();
   const { theme, setTheme } = useTheme();

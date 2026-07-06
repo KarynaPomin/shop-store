@@ -8,17 +8,17 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div>
         <h3>Shop</h3>
-        <a href="#">New Arrivals</a>
-        <a href="#">Women</a>
-        <a href="#">Men</a>
-        <a href="#">Sale</a>
+        <button type="button">New Arrivals</button>
+        <button type="button">Women</button>
+        <button type="button">Men</button>
+        <button type="button">Sale</button>
       </div>
       <div>
         <h3>Help</h3>
-        <a href="#">Contact</a>
-        <a href="#">Shipping</a>
-        <a href="#">Returns</a>
-        <a href="#">FAQ</a>
+        <button type="button">Contact</button>
+        <button type="button">Shipping</button>
+        <button type="button">Returns</button>
+        <button type="button">FAQ</button>
       </div>
       <div className={styles.social}>
         <h3>Follow Us</h3>

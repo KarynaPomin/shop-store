@@ -59,7 +59,7 @@ export default function Header() {
   const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const likedCount = state.wishlist.length;
 
-  const { data, loading, error } = useFetch("categories?populate=*");
+  const { data } = useFetch("categories?populate=*");
 
   const nav = (
     <>
