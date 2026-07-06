@@ -16,8 +16,15 @@
   font-size: 1.45rem;
 }
 
-.footer a {
+.footer a,
+.footer button {
   color: var(--text);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
 }
 
 .social span {

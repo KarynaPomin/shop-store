@@ -40,7 +40,7 @@ export default function ProductCard({ product }) {
         ) : (
           <img
             src="https://placehold.net/default.png"
-            alt="No image"
+            alt="Unavailable"
             loading="lazy"
           />
         )}

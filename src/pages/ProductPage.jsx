@@ -172,7 +172,7 @@ export default function ProductPage() {
               ))}
             </div>
 
-            <a href="#">Size guide</a>
+            <button type="button" className={styles.sizeGuide}>Size guide</button>
           </fieldset>
 
           <label className={styles.qty}>

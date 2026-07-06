@@ -5,7 +5,7 @@ import useFetch from '../hooks/useFetch.js';
 import styles from './Dashboard.module.css';
 
 export default function Admin() {
-  const { data, loading, error } = useFetch("products?populate=*");
+  const { data } = useFetch("products?populate=*");
 
   const cards = [
     ['Products', data.length, 'Create, edit and delete mock products.'],

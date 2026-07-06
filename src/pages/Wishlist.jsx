@@ -8,7 +8,7 @@ import useFetch from '../hooks/useFetch.js';
 export default function Wishlist() {
   const { state } = useStore();
 
-  const { data, loading, error } = useFetch("products?populate=*");
+  const { data } = useFetch("products?populate=*");
   console.log(data);
   const likedProducts = (data || []).filter(product =>
     state.wishlist.includes(product.id)

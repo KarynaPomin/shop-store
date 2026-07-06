@@ -132,6 +132,15 @@
   color: var(--muted);
 }
 
+.sizeGuide {
+  justify-self: start;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
 .swatches,
 .sizes {
   display: flex;
