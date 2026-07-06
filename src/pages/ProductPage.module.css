@@ -100,9 +100,19 @@
 }
 
 .price {
+  display: flex;
   margin: 0;
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 900;
+  gap: 9px;
+}
+
+.price s {
+  color: var(--muted);
+}
+
+.price strong {
+  color: var(--sale);
 }
 
 .panel fieldset {

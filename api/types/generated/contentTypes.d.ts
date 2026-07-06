@@ -491,7 +491,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::category.category'
     >;
-    colors: Schema.Attribute.String;
+    colors: Schema.Attribute.JSON;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -513,7 +513,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     rating: Schema.Attribute.Decimal;
     reviews: Schema.Attribute.Integer;
     salePrice: Schema.Attribute.Decimal;
-    sizes: Schema.Attribute.Decimal;
+    sizes: Schema.Attribute.JSON;
     sku: Schema.Attribute.String;
     stock: Schema.Attribute.Integer;
     sub_categories: Schema.Attribute.Relation<

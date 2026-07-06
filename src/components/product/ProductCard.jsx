@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 import { motion } from 'framer-motion';
 import { useStore } from '../../context/StoreContext.jsx';
 import { currency } from '../../utils/format.js';
 import styles from './ProductCard.module.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
+const renderStars = (rating) => {
+  return Array.from({ length: 5 }, (_, i) => {
+    const value = i + 1;
+
+    if (rating >= value) {
+      return <StarIcon key={i} />;
+    }
+
+    if (rating >= value - 0.5) {
+      return <StarIcon key={i} style={{ opacity: 0.5 }} />;
+    }
+
+    return <StarIcon key={i} style={{ opacity: 0.2 }} />;
+  });
+};
 
 export default function ProductCard({ product }) {
   const { state, toggleWishlist } = useStore();
@@ -42,7 +58,8 @@ export default function ProductCard({ product }) {
           <strong>{currency(product.salePrice || product.price)}</strong>
         </p>
         <div className={styles.rating}>
-          {Array.from({ length: 5 }).map((_, index) => <StarBorderIcon key={index} />)}
+          {renderStars(product.rating)}
+          <span>{product.rating} ({product.reviews} reviews)</span>
         </div>
       </div>
     </motion.article>

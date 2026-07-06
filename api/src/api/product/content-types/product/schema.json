@@ -51,12 +51,6 @@
     "reviews": {
       "type": "integer"
     },
-    "colors": {
-      "type": "string"
-    },
-    "sizes": {
-      "type": "decimal"
-    },
     "images": {
       "type": "media",
       "multiple": true,
@@ -76,6 +70,12 @@
       "relation": "manyToMany",
       "target": "api::sub-category.sub-category",
       "inversedBy": "products"
+    },
+    "colors": {
+      "type": "json"
+    },
+    "sizes": {
+      "type": "json"
     }
   }
 }
