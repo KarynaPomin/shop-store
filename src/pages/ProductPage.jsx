@@ -12,10 +12,10 @@ import Seo from '../components/common/Seo.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 
 import { useStore } from '../context/StoreContext.jsx';
-import { reviews } from '../data/catalog.js';
 import useFetch from '../hooks/useFetch.js';
 import { currency } from '../utils/format.js';
 import styles from './ProductPage.module.css';
+import { ReviewsCard } from '../components/product/ReviewsCard.jsx';
 
 const handleShare = async () => {
   try {
@@ -63,8 +63,10 @@ export default function ProductPage() {
   const { state, addToCart, toggleWishlist } = useStore();
   const wished = state.wishlist.includes(product?.id);
 
-  const approvedReviews = reviews.filter(
-    (review) => review.productId === product?.id && review.approved
+  const {
+    data: reviews,
+  } = useFetch(
+    `reviews?populate=*&filters[product][id][$eq]=${id}`
   );
 
   const similar = useMemo(() => {
@@ -132,7 +134,7 @@ export default function ProductPage() {
 
           <div className={styles.rating}>
             {renderStars(product.rating)}
-            <span>{product.rating} ({product.reviews} reviews)</span>
+            <span>{product.rating} ({product.reviews.length} reviews)</span>
           </div>
           
           <p className={styles.price}>
@@ -222,17 +224,7 @@ export default function ProductPage() {
         </aside>
       </section>
 
-      <section className={styles.reviews}>
-        <h2>Reviews</h2>
-
-        {approvedReviews.map((review) => (
-          <article key={review.id}>
-            <strong>{review.author}</strong>
-            <span>{review.rating}/5</span>
-            <p>{review.text}</p>
-          </article>
-        ))}
-      </section>
+      <ReviewsCard reviews={reviews} renderStars={renderStars} product={product} />
 
       <ProductGrid
         products={similar.length ? similar : products?.slice(0, 4)}

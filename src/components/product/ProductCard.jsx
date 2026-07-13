@@ -57,7 +57,7 @@ export default function ProductCard({ product }) {
         </p>
         <div className={styles.rating}>
           {renderStars(product.rating)}
-          <span>{product.rating} ({product.reviews} reviews)</span>
+          <span>{product.rating} ({product.reviews?.length} reviews)</span>
         </div>
       </div>
     </motion.article>

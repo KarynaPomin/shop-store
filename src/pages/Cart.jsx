@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
+import { Link } from 'react-router-dom';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
 import { useStore } from '../context/StoreContext.jsx';
@@ -15,6 +15,8 @@ export default function Cart() {
     setCoupon,
   } = useStore();
 
+  const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
+
   return (
     <Page className={styles.page}>
       <Seo title="Cart" description="Review cart items, coupon, shipping and order summary." />
@@ -24,7 +26,7 @@ export default function Cart() {
           {state.cart.length === 0 && <p>Your cart is empty. Start with the new collection.</p>}
           {state.cart.map((item, index) => (
             <article key={`${item.id}-${item.size}-${item.color}`}>
-              <img src={item.images[0]} alt={item.name} />
+              <img src={`${baseUrl}${item.images[0].url}`} alt={item.name} />
               <div>
                 <h2>{item.name}</h2>
                 <p>{item.color} • {item.size}</p>

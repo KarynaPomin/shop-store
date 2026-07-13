@@ -13,15 +13,17 @@ const useFetch = (url) => {
                 const res = await makeRequest.get(url);
                 setData(res.data.data);
             } catch (err) {
-                console.log(err.res?.data);
-                setError(err.res?.data);
+                console.log(err.response);
+                console.log(err.response?.data);
+                
+                setError(err.response?.data);
             }
             setLoading(false);
         };
-
+        
         fetchData();
     }, [url]);
-
+    
     return { data, loading, error };
 }
 

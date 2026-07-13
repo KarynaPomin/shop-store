@@ -48,9 +48,6 @@
     "rating": {
       "type": "decimal"
     },
-    "reviews": {
-      "type": "integer"
-    },
     "images": {
       "type": "media",
       "multiple": true,
@@ -76,6 +73,12 @@
     },
     "sizes": {
       "type": "json"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
     }
   }
 }

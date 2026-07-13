@@ -9,13 +9,9 @@ export default function Wishlist() {
   const { state } = useStore();
 
   const { data, loading, error } = useFetch("products?populate=*");
-  console.log(data);
   const likedProducts = (data || []).filter(product =>
     state.wishlist.includes(product.id)
   );
-
-  console.log(state.wishlist);
-  console.log("liked:", likedProducts);
 
   return (
     <Page className="content-page">

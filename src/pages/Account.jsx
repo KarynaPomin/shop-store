@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import Page from '../components/common/Page.jsx';
 import Seo from '../components/common/Seo.jsx';
-import { orders } from '../data/catalog.js';
 import { useStore } from '../context/StoreContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
-import styles from './Dashboard.module.css';
+import { orders } from '../data/catalog.js';
 import useFetch from '../hooks/useFetch.js';
+import styles from './Dashboard.module.css';
 
 const defaultAccount = {
   firstName: 'Karin',
