@@ -1,30 +1,30 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import StarIcon from '@mui/icons-material/Star';
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import StarIcon from "@mui/icons-material/Star";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
-import Page from '../components/common/Page.jsx';
-import Seo from '../components/common/Seo.jsx';
-import ProductGrid from '../components/product/ProductGrid.jsx';
+import Page from "../components/common/Page.jsx";
+import Seo from "../components/common/Seo.jsx";
+import ProductGrid from "../components/product/ProductGrid.jsx";
 
-import { useStore } from '../context/StoreContext.jsx';
-import useFetch from '../hooks/useFetch.js';
-import { currency } from '../utils/format.js';
-import styles from './ProductPage.module.css';
-import { ReviewsCard } from '../components/product/ReviewsCard.jsx';
+import { useStore } from "../context/StoreContext.jsx";
+import useFetch from "../hooks/useFetch.js";
+import { currency } from "../utils/format.js";
+import styles from "./ProductPage.module.css";
+import { ReviewsCard } from "../components/product/ReviewsCard.jsx";
 
 const handleShare = async () => {
   try {
     await navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard');
+    alert("Link copied to clipboard");
   } catch (err) {
-    console.error('failed to copy');
+    console.error("failed to copy");
   }
-}
+};
 
 const renderStars = (rating) => {
   return Array.from({ length: 5 }, (_, i) => {
@@ -45,13 +45,13 @@ const renderStars = (rating) => {
 export default function ProductPage() {
   const { id } = useParams();
 
-  const { data: dataProduct, loading, error } = useFetch(
-    `products?populate=*&filters[id][$eq]=${id}`
-  );
+  const {
+    data: products,
+    loading,
+    error,
+  } = useFetch(`products?populate=*&filters[id][$eq]=${id}`);
 
-  const product = dataProduct?.[0];
-
-  const { data: products } = useFetch('products?populate=*');
+  const product = products?.[0];
 
   const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 
@@ -63,10 +63,8 @@ export default function ProductPage() {
   const { state, addToCart, toggleWishlist } = useStore();
   const wished = state.wishlist.includes(product?.id);
 
-  const {
-    data: reviews,
-  } = useFetch(
-    `reviews?populate=*&filters[product][id][$eq]=${id}`
+  const { data: reviews, refetch: refetchReviews } = useFetch(
+    `reviews?populate=*&filters[product][id][$eq]=${id}`,
   );
 
   const similar = useMemo(() => {
@@ -74,9 +72,7 @@ export default function ProductPage() {
 
     return products
       .filter(
-        (item) =>
-          item.category === product.category &&
-          item.id !== product.id
+        (item) => item.category === product.category && item.id !== product.id,
       )
       .slice(0, 4);
   }, [products, product]);
@@ -115,7 +111,7 @@ export default function ProductPage() {
             {product?.images?.map((item, index) => (
               <button
                 key={item.id || item.url || index}
-                className={image?.url === item.url ? styles.selected : ''}
+                className={image?.url === item.url ? styles.selected : ""}
                 onClick={() => setImage(item)}
               >
                 <img src={`${baseUrl}${item.url}`} alt="" />
@@ -134,9 +130,11 @@ export default function ProductPage() {
 
           <div className={styles.rating}>
             {renderStars(product.rating)}
-            <span>{product.rating} ({product.reviews.length} reviews)</span>
+            <span>
+              {product.rating} ({product.reviews.length} reviews)
+            </span>
           </div>
-          
+
           <p className={styles.price}>
             {product.salePrice && <s>{currency(product.price)}</s>}
             <strong>{currency(product.salePrice || product.price)}</strong>
@@ -151,7 +149,7 @@ export default function ProductPage() {
               {product?.colors?.colors.map((item, index) => (
                 <button
                   key={item.name}
-                  className={`${styles.swatch} ${color === item.name ? styles.active : ''}`}
+                  className={`${styles.swatch} ${color === item.name ? styles.active : ""}`}
                   style={{ backgroundColor: item.hex }}
                   onClick={() => setColor(item.name)}
                 />
@@ -160,13 +158,15 @@ export default function ProductPage() {
           </fieldset>
 
           <fieldset>
-            <legend>Size <span>• {size}</span></legend>
+            <legend>
+              Size <span>• {size}</span>
+            </legend>
 
             <div className={styles.sizes}>
               {product?.sizes?.map((item, index) => (
                 <button
                   key={item || index}
-                  className={size === item ? styles.selectedSize : ''}
+                  className={size === item ? styles.selectedSize : ""}
                   onClick={() => setSize(item)}
                 >
                   {item}
@@ -196,7 +196,11 @@ export default function ProductPage() {
               <ShoppingBagOutlinedIcon /> Add to cart
             </button>
 
-            <button className="button" onClick={() => toggleWishlist(product.id)} aria-label="Toggle favorite">
+            <button
+              className="button"
+              onClick={() => toggleWishlist(product.id)}
+              aria-label="Toggle favorite"
+            >
               {wished ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </button>
 
@@ -224,7 +228,12 @@ export default function ProductPage() {
         </aside>
       </section>
 
-      <ReviewsCard reviews={reviews} renderStars={renderStars} product={product} />
+      <ReviewsCard
+        reviews={reviews}
+        renderStars={renderStars}
+        product={product}
+        refetchReviews={refetchReviews}
+      />
 
       <ProductGrid
         products={similar.length ? similar : products?.slice(0, 4)}

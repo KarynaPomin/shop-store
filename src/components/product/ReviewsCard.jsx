@@ -1,88 +1,90 @@
-import { useMemo, useState } from 'react';
-import styles from './ReviewsCard.module.css';
+import { useMemo, useState } from "react";
+import styles from "./ReviewsCard.module.css";
 
-import Icon from '@mui/material/Icon';
-import { makeRequest } from '../../makeRequest';
+import Icon from "@mui/material/Icon";
+import { makeRequest } from "../../makeRequest";
 import StarIcon from "@mui/icons-material/Star";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useAuth } from "../../context/AuthContext";
 
-export const ReviewsCard = ({ reviews, renderStars, product }) => {
-    const [author, setAuthor] = useState('');
-    const [comment, setComment] = useState('');
-    const [rating, setRating] = useState(5);
+export const ReviewsCard = ({
+  reviews,
+  renderStars,
+  product,
+  refetchReviews,
+}) => {
+  const { user } = useAuth();
 
-    const averageRating = useMemo(() => {
-        if (!reviews?.length) return 0;
+  const [author, setAuthor] = useState(user ? user?.firstName : "");
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(5);
 
-        return (
-        reviews.reduce((sum, review) => sum + review.rating, 0) /
-        reviews.length
-        ).toFixed(1);
-    }, [reviews]);
+  const averageRating = useMemo(() => {
+    if (!reviews?.length) return 0;
 
-    const handleStarClick = (e, value) => {
-        const { left, width } = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - left;
+    return (
+      reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    ).toFixed(1);
+  }, [reviews]);
 
-        if (x < width / 2) {
-            setRating(value - 0.5);
-        } else {
-            setRating(value);
-        }
-    };
+  const handleStarClick = (e, value) => {
+    const { left, width } = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - left;
 
-    const handleSubmitReview = async (e) => {
-        e.preventDefault();
+    if (x < width / 2) {
+      setRating(value - 0.5);
+    } else {
+      setRating(value);
+    }
+  };
 
-        try {
-            await makeRequest.post('/reviews', {
-                data: {
-                authorName: author,
-                comment,
-                rating,
-                approved: true,
-                product: product.id,
-            },
-        });
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
 
-        setAuthor('');
-        setComment('');
-        setRating(5);
+    try {
+      await makeRequest.post("/reviews", {
+        data: {
+          authorName: author,
+          comment,
+          rating,
+          approved: true,
+          product: product.id,
+        },
+      });
 
-        alert('Review submitted. It will appear after approval.');
-        } catch (err) {
-            console.error(err);
-            console.log(err.response?.data);
-        }
-    };
+      setAuthor("");
+      setComment("");
+      setRating(5);
+
+      await refetchReviews();
+
+      alert("Review submitted.");
+    } catch (err) {
+      console.error(err);
+      console.log(err.response?.data);
+    }
+  };
 
   return (
     <section className={styles.reviews}>
-
       <div className={styles.list}>
         <h2>Reviews</h2>
 
-        {reviews?.length === 0 && (
-          <p>No reviews yet.</p>
-        )}
+        {reviews?.length === 0 && <p>No reviews yet.</p>}
 
         {reviews?.map((review) => (
           <article key={review.id} className={styles.review}>
             <strong>{review.authorName}</strong>
 
-            <div className={styles.stars}>
-              {renderStars(review.rating)}
-            </div>
+            <div className={styles.stars}>{renderStars(review.rating)}</div>
 
             <p>{review.comment}</p>
           </article>
         ))}
       </div>
 
-
       <aside className={styles.sidebar}>
-
         <div className={styles.average}>
           <h3>Average rating</h3>
 
@@ -95,53 +97,51 @@ export const ReviewsCard = ({ reviews, renderStars, product }) => {
           </span>
         </div>
 
+        <form className={styles.form} onSubmit={handleSubmitReview}>
+          <h3>Add review</h3>
 
-        <form 
-          className={styles.form}
-          onSubmit={handleSubmitReview}
-        >
-            <h3>Add review</h3>
-
+          {user ? (
+            <input value={author} readOnly />
+          ) : (
             <input
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                placeholder="Your name"
-                required
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              placeholder="Your name"
+              required
             />
+          )}
 
-            <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Write your review..."
-                required
-            />
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Write your review..."
+            required
+          />
 
-            <div className={styles.starSelect}>
-                {[1, 2, 3, 4, 5].map((value) => (
-                    <button
-                    key={value}
-                    type="button"
-                    className={styles.starButton}
-                    onClick={(e) => handleStarClick(e, value)}
-                    >
-                    {rating >= value ? (
-                        <StarIcon />
-                    ) : rating === value - 0.5 ? (
-                        <StarHalfIcon />
-                    ) : (
-                        <StarBorderIcon />
-                    )}
-                    </button>
-                ))}
-            </div>
+          <div className={styles.starSelect}>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={styles.starButton}
+                onClick={(e) => handleStarClick(e, value)}
+              >
+                {rating >= value ? (
+                  <StarIcon />
+                ) : rating === value - 0.5 ? (
+                  <StarHalfIcon />
+                ) : (
+                  <StarBorderIcon />
+                )}
+              </button>
+            ))}
+          </div>
 
           <button type="submit" className="button buttonLight">
             Add review
           </button>
         </form>
-
       </aside>
-
     </section>
   );
 };
