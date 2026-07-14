@@ -4,14 +4,13 @@ import Seo from "../components/common/Seo.jsx";
 import { useStore } from "../context/StoreContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
-import { orders } from "../data/catalog.js";
 import useFetch from "../hooks/useFetch.js";
 import styles from "./Dashboard.module.css";
 import { GoogleLogin } from "@react-oauth/google";
+import { OrderList } from "../components/account/OrderList.jsx";
 
 export default function Account() {
   const { data, loading, error } = useFetch("products?populate=*");
-  console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
   const { state } = useStore();
   const { theme, setTheme } = useTheme();
@@ -70,8 +69,6 @@ export default function Account() {
     loginWithEmail(email);
     setAuthMessage("Logged in");
   };
-
-  console.log(user);
 
   return (
     <Page className={styles.page}>
@@ -216,15 +213,11 @@ export default function Account() {
           <p>Google Login placeholder is ready for OAuth connection.</p>
         </article>
 
-        <article className={styles.statCard}>
-          <h2>Orders</h2>
-          {orders.map((order) => (
-            <p key={order.id}>
-              <strong>{order.id}</strong>
-              <span>{order.status}</span>
-            </p>
-          ))}
-        </article>
+        {/* ORDERS */}
+
+        <OrderList />
+
+        {/* ORDERS */}
 
         <article className={styles.statCard}>
           <h2>Security</h2>
