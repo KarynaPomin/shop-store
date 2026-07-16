@@ -14,14 +14,40 @@
     "orderId": {
       "type": "string"
     },
-    "createAt": {
-      "type": "datetime"
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "orders"
+    },
+    "delivery": {
+      "type": "enumeration",
+      "enum": [
+        "standard",
+        "express",
+        "pickup"
+      ]
+    },
+    "paymentMethod": {
+      "type": "enumeration",
+      "enum": [
+        "PayPal",
+        "BLIK",
+        "Credic Card",
+        "Cash on delivery"
+      ]
     },
     "totalPrice": {
       "type": "decimal"
     },
-    "userEmail": {
-      "type": "string"
+    "order_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order-item.order-item",
+      "mappedBy": "order"
+    },
+    "createAt": {
+      "type": "datetime"
     },
     "statusOrder": {
       "type": "enumeration",
@@ -33,21 +59,6 @@
     },
     "shippingAdress": {
       "type": "string"
-    },
-    "order_items": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::order-item.order-item",
-      "mappedBy": "order"
-    },
-    "paymentMethod": {
-      "type": "enumeration",
-      "enum": [
-        "PayPal",
-        "BLIK",
-        "Credic Card",
-        "Cash on delivery"
-      ]
     },
     "notes": {
       "type": "text"

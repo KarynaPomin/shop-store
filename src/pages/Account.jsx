@@ -8,6 +8,8 @@ import useFetch from "../hooks/useFetch.js";
 import styles from "./Dashboard.module.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { OrderList } from "../components/account/OrderList.jsx";
+import { makeRequest } from "../makeRequest.js";
+import { delay } from "motion-dom";
 
 export default function Account() {
   const { data, loading, error } = useFetch("products?populate=*");
@@ -24,7 +26,10 @@ export default function Account() {
     updateUser,
   } = useAuth();
 
+  const [loginUsername, setLoginUsername] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginPasswordRepeat, setLoginPasswordRepeat] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [saved, setSaved] = useState("");
 
@@ -35,12 +40,22 @@ export default function Account() {
   const initials = useMemo(() => {
     if (!user) return "GU";
 
-    return `${user.firstName?.charAt(0) || ""}
+    return `${user.name?.charAt(0) || ""}
             ${user.surname?.charAt(0) || ""}`.toUpperCase();
   }, [user]);
 
-  const saveAccount = () => {
+  const saveAccount = async () => {
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    try {
+      const { data } = await makeRequest.put(`/users/${user.id}`, user);
+    } catch (err) {
+      console.error(err);
+    }
+
     setSaved("Saved");
+    await delay(2000);
+    setSaved("Save changes");
   };
 
   const uploadPhoto = (event) => {
@@ -56,18 +71,46 @@ export default function Account() {
     reader.readAsDataURL(file);
   };
 
-  const login = (event) => {
+  const login = async (event) => {
     event.preventDefault();
 
     const email = loginEmail.trim();
+    const password = loginPassword.trim();
+    const passwordRepeat = loginPasswordRepeat.trim();
 
-    if (!email.includes("@")) {
-      setAuthMessage("Enter valid email");
+    if (!email) {
+      setAuthMessage("Email is required.");
       return;
     }
 
-    loginWithEmail(email);
-    setAuthMessage("Logged in");
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setAuthMessage("Enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      setAuthMessage("Password is required.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setAuthMessage("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== passwordRepeat) {
+      setAuthMessage("Passwords do not match.");
+      return;
+    }
+
+    try {
+      await loginWithEmail(email, password);
+      setAuthMessage("Account created successfully.");
+    } catch (err) {
+      setAuthMessage(
+        err.response?.data?.error?.message || "Registration failed.",
+      );
+    }
   };
 
   return (
@@ -79,17 +122,14 @@ export default function Account() {
       <header className={styles.profile}>
         <div className={styles.avatar}>
           {user?.photo ? (
-            <img
-              src={user?.photo}
-              alt={`${user?.firstName} ${user?.surname}`}
-            />
+            <img src={user?.photo} alt={`${user?.name} ${user?.surname}`} />
           ) : (
             initials
           )}
         </div>
         <div>
           <h1>
-            {user?.firstName} {user?.surname}
+            {user?.name} {user?.surname}
           </h1>
           <p>
             {session.loggedIn
@@ -113,10 +153,8 @@ export default function Account() {
             <label>
               Name
               <input
-                value={user?.firstName || ""}
-                onChange={(event) =>
-                  updateUser("firstName", event.target.value)
-                }
+                value={user?.name || ""}
+                onChange={(event) => updateUser("name", event.target.value)}
               />
             </label>
             <label>
@@ -213,11 +251,7 @@ export default function Account() {
           <p>Google Login placeholder is ready for OAuth connection.</p>
         </article>
 
-        {/* ORDERS */}
-
         <OrderList />
-
-        {/* ORDERS */}
 
         <article className={styles.statCard}>
           <h2>Security</h2>
@@ -242,9 +276,33 @@ export default function Account() {
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="you@example.com"
+                  required
                 />
               </label>
 
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="Password"
+                  minLength={6}
+                  required
+                />
+              </label>
+
+              <label>
+                Repeat password
+                <input
+                  type="password"
+                  value={loginPasswordRepeat}
+                  onChange={(e) => setLoginPasswordRepeat(e.target.value)}
+                  placeholder="Password repeat"
+                  minLength={6}
+                  required
+                />
+              </label>
               <button type="submit">Log in</button>
 
               <GoogleLogin

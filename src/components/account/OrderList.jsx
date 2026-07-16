@@ -1,7 +1,8 @@
-import React, { useState } from "react";
 import styles from "./OrderList.module.css";
 import useFetch from "../../hooks/useFetch";
 import Drawer from "@mui/material/Drawer";
+import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 const getStatusTheme = (status) => {
   const normStatus = status?.toLowerCase();
@@ -40,12 +41,21 @@ const formatDate = (dateString) => {
 };
 
 export const OrderList = () => {
-  const { data: orders } = useFetch(
+  const { user } = useAuth();
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const { data: orders, loading } = useFetch(
     "orders?populate[order_items][populate][product][populate]=images",
   );
   const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  if (!user) {
+    return <p>Login to see orders</p>;
+  }
+
+  if (loading) {
+    return <p>Loading orders...</p>;
+  }
 
   return (
     <div className={styles.ordersWrapper}>

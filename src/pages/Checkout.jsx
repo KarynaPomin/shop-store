@@ -8,6 +8,7 @@ import { useStore } from "../context/StoreContext.jsx";
 import { currency } from "../utils/format.js";
 import styles from "./Checkout.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
+import { makeRequest } from "../makeRequest.js";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -15,7 +16,7 @@ const schema = z.object({
   address: z.string().min(6, "Enter a delivery address"),
   city: z.string().min(2, "Enter a city"),
   delivery: z.enum(["standard", "express", "pickup"]),
-  payment: z.enum(["paypal", "cash"]),
+  payment: z.enum(["PayPal", "BLIK", "Credit Card", "Cash on delivery"]),
 });
 
 export default function Checkout() {
@@ -37,35 +38,53 @@ export default function Checkout() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: user ? `${user.firstName} ${user.surname}` : "",
+      name: user ? `${user.name} ${user.surname}` : "",
       email: user?.email || "",
       address: user?.address || "",
       delivery: "standard",
-      payment: "cash",
+      paymentMethod: "cash",
     },
   });
 
-  const onSubmit = (data) => {
-    const order = {
-      id: `ORD-${Date.now().toString().slice(-6)}`,
-      type: isLoggedIn ? "account" : "guest",
-      email: data.email,
-      name: data.name,
-      delivery: data.delivery,
-      payment: data.payment,
-      total: cartTotals.total,
-      items: state.cart.map((item) => ({
-        id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        size: item.size,
-        color: item.color,
-        price: item.salePrice || item.price,
-      })),
-      createdAt: new Date().toISOString(),
-    };
+  const onSubmit = async (e) => {
+    try {
+      const { data: order } = await makeRequest.post("/orders", {
+        data: {
+          orderId: `ORD-${Date.now()}`,
+          createAt: new Date().toISOString(),
+          totalPrice: cartTotals.total,
+          statusOrder: "waiting",
+          shippingAdress: e.address,
+          paymentMethod: e.payment,
+          delivery: e.delivery,
+          user: user.id,
+          discount: cartTotals.discount,
+          notes: "",
+        },
+      });
 
-    localStorage.setItem("shop-last-order", JSON.stringify(order));
+      const orderId = order.data.id;
+
+      for (const item of state.cart) {
+        await makeRequest.post("/order-items", {
+          data: {
+            quantity: item.quantity,
+            price: item.salePrice || item.price,
+            size: item.size,
+            color: item.color,
+            product: item.id,
+            order: orderId,
+          },
+        });
+      }
+
+      alert("Order send!");
+    } catch (err) {
+      console.error(err);
+      console.log(err.response?.data);
+    }
+
+    // localStorage.setItem("shop-last-order", JSON.stringify(order));
     clearCart({ type: "CLEAR_CART" });
     navigate("/confirmation");
   };
@@ -120,12 +139,16 @@ export default function Checkout() {
           <h2>Payment</h2>
           <div className={styles.options}>
             <label>
-              <input type="radio" value="paypal" {...register("payment")} />{" "}
+              <input type="radio" value="PayPal" {...register("payment")} />{" "}
               PayPal placeholder
             </label>
             <label>
-              <input type="radio" value="cash" {...register("payment")} /> Cash
-              on delivery
+              <input
+                type="radio"
+                value="Cash on delivery"
+                {...register("payment")}
+              />{" "}
+              Cash on delivery
             </label>
           </div>
         </section>

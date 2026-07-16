@@ -7,15 +7,20 @@ const useFetch = (url) => {
   const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
+    if (!url) {
+      setData(null);
+      return;
+    }
+
     try {
       setLoading(true);
 
       const res = await makeRequest.get(url);
 
-      setData(res.data.data);
+      setData(res.data.data ?? res.data);
       setError(null);
     } catch (err) {
-      setError(err.response?.data);
+      setError(err.response?.data || err.message);
     } finally {
       setLoading(false);
     }

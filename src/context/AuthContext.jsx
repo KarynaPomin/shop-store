@@ -1,12 +1,9 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { makeRequest } from "../makeRequest";
+import useFetch from "../hooks/useFetch";
 
 const AuthContext = createContext(null);
 
@@ -29,9 +26,7 @@ function loadSession() {
 
 function loadAccount() {
   try {
-    return (
-      JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || null
-    );
+    return JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || null;
   } catch {
     return null;
   }
@@ -42,42 +37,63 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadAccount);
 
   useEffect(() => {
-    localStorage.setItem(
-      SESSION_KEY,
-      JSON.stringify(session)
-    );
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   }, [session]);
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem(
-        ACCOUNT_KEY,
-        JSON.stringify(user)
-      );
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(user));
     } else {
       localStorage.removeItem(ACCOUNT_KEY);
     }
   }, [user]);
 
-  const loginWithGoogle = (credentialResponse) => {
-    const profile = jwtDecode(
-      credentialResponse.credential
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  async function syncUserWithStrapi(account) {
+    const check = await fetch(
+      `${API_URL}/users?filters[email][$eq]=${account.email}`,
     );
 
+    const users = await check.json();
+
+    if (users.length > 0) {
+      return users[0];
+    }
+
+    const response = await fetch(`${API_URL}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: account.username,
+        email: account.email,
+        provider: "google",
+        confirmed: true,
+      }),
+    });
+
+    return await response.json();
+  }
+
+  const loginWithGoogle = async (credentialResponse) => {
+    const profile = jwtDecode(credentialResponse.credential);
+
     const account = {
-      firstName: profile.given_name,
+      name: profile.given_name,
       surname: profile.family_name,
       username: profile.email.split("@")[0],
       email: profile.email,
       photo: profile.picture,
-      phone: "",
-      address: "",
-      pickupStore: "Central Store",
-      newsletter: true,
-      orderUpdates: true,
     };
 
-    setUser(account);
+    const strapiUser = await syncUserWithStrapi(account);
+
+    setUser({
+      ...account,
+      strapiId: strapiUser.id,
+    });
 
     setSession({
       loggedIn: true,
@@ -86,27 +102,51 @@ export function AuthProvider({ children }) {
     });
   };
 
-  const loginWithEmail = (email) => {
-    const account = {
-      firstName: "",
-      surname: "",
-      username: email.split("@")[0],
-      email,
-      photo: "",
-      phone: "",
-      address: "",
-      pickupStore: "Central Store",
-      newsletter: true,
-      orderUpdates: true,
-    };
+  const loginWithEmail = async (email, password) => {
+    try {
+      const { data: users } = await makeRequest.get(
+        `users?filters[email][$eq]=${email}`,
+      );
 
-    setUser(account);
+      if (users.length > 0) {
+        const { data } = await makeRequest.post("/auth/local", {
+          identifier: email,
+          password,
+        });
 
-    setSession({
-      loggedIn: true,
-      email,
-      provider: "email",
-    });
+        setUser(data.user);
+
+        setSession({
+          loggedIn: true,
+          email,
+          provider: "email",
+        });
+
+        return;
+      }
+
+      const { data } = await makeRequest.post("/auth/local/register", {
+        username: email.split("@")[0],
+        email,
+        password,
+      });
+
+      setUser(data.user);
+
+      setSession({
+        loggedIn: true,
+        email,
+        provider: "email",
+      });
+    } catch (err) {
+      console.error(err);
+
+      if (err.response?.data?.error?.message) {
+        throw new Error(err.response.data.error.message);
+      }
+
+      throw new Error("Authentication failed.");
+    }
   };
 
   const logout = () => {

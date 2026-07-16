@@ -16,7 +16,7 @@ export const ReviewsCard = ({
 }) => {
   const { user } = useAuth();
 
-  const [author, setAuthor] = useState(user ? user?.firstName : "");
+  const [author, setAuthor] = useState(user ? user?.name : "");
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
 
