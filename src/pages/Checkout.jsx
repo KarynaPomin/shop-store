@@ -22,13 +22,7 @@ const schema = z.object({
 export default function Checkout() {
   const navigate = useNavigate();
   const { state, cartTotals, clearCart } = useStore();
-  // const session = (() => {
-  //   try {
-  //     return JSON.parse(localStorage.getItem('shop-session')) || { loggedIn: false, email: '' };
-  //   } catch {
-  //     return { loggedIn: false, email: '' };
-  //   }
-  // })();
+
   const { user, session, isLoggedIn } = useAuth();
 
   const {
@@ -57,9 +51,10 @@ export default function Checkout() {
           shippingAdress: e.address,
           paymentMethod: e.payment,
           delivery: e.delivery,
-          user: user.id,
+          user: user?.id,
           discount: cartTotals.discount,
           notes: "",
+          email: e.email,
         },
       });
 
@@ -84,7 +79,6 @@ export default function Checkout() {
       console.log(err.response?.data);
     }
 
-    // localStorage.setItem("shop-last-order", JSON.stringify(order));
     clearCart({ type: "CLEAR_CART" });
     navigate("/confirmation");
   };
@@ -155,7 +149,7 @@ export default function Checkout() {
         <aside className={styles.summary}>
           <h2>Order summary</h2>
           {state.cart.map((item) => (
-            <p key={`${item.id}-${item.size}`}>
+            <p key={item.cartId}>
               <span>
                 {item.quantity} x {item.name}
               </span>

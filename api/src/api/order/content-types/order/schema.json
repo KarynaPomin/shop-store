@@ -65,6 +65,9 @@
     },
     "discount": {
       "type": "decimal"
+    },
+    "email": {
+      "type": "string"
     }
   }
 }

@@ -87,6 +87,17 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "user"
+    },
+    "favorite_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product"
+    },
+    "cart_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::cart-item.cart-item",
+      "mappedBy": "user"
     }
   }
 }

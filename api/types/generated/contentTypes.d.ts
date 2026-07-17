@@ -440,6 +440,41 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCartItemCartItem extends Struct.CollectionTypeSchema {
+  collectionName: 'cart_items';
+  info: {
+    displayName: 'cart-item';
+    pluralName: 'cart-items';
+    singularName: 'cart-item';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    color: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cart-item.cart-item'
+    > &
+      Schema.Attribute.Private;
+    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    publishedAt: Schema.Attribute.DateTime;
+    quantity: Schema.Attribute.Integer;
+    size: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -525,6 +560,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     delivery: Schema.Attribute.Enumeration<['standard', 'express', 'pickup']>;
     discount: Schema.Attribute.Decimal;
+    email: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
@@ -565,6 +601,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   };
   attributes: {
     brand: Schema.Attribute.String;
+    cart_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
     categories: Schema.Attribute.Relation<
       'oneToMany',
       'api::category.category'
@@ -1134,6 +1174,10 @@ export interface PluginUsersPermissionsUser
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    cart_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cart-item.cart-item'
+    >;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     createdAt: Schema.Attribute.DateTime;
@@ -1144,6 +1188,10 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    favorite_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product.product'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1189,6 +1237,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::cart-item.cart-item': ApiCartItemCartItem;
       'api::category.category': ApiCategoryCategory;
       'api::order-item.order-item': ApiOrderItemOrderItem;
       'api::order.order': ApiOrderOrder;

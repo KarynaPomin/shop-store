@@ -24,9 +24,16 @@ export default function Cart() {
           {state.cart.length === 0 && (
             <p>Your cart is empty. Start with the new collection.</p>
           )}
-          {state.cart.map((item, index) => (
-            <article key={`${item.id}-${item.size}-${item.color}`}>
-              <img src={`${baseUrl}${item.images[0].url}`} alt={item.name} />
+          {state.cart.map((item) => (
+            <article key={item.cartId}>
+              <img
+                src={
+                  item.images?.[0]?.url
+                    ? `${baseUrl}${item.images[0].url}`
+                    : "/placeholder.png"
+                }
+                alt={item.name}
+              />
               <div>
                 <h2>{item.name}</h2>
                 <p>

@@ -151,13 +151,22 @@ export default function Account() {
               : `@${user?.username}`}
           </p>
         </div>
-        <div className={styles.profileActions}>
-          <label className={styles.uploadButton}>
-            Add photo
-            <input type="file" accept="image/*" onChange={uploadPhoto} />
-          </label>
-          <button onClick={saveAccount}>{saved || "Save changes"}</button>
-        </div>
+
+        {!user ? (
+          <div className={styles.profileActions}>
+            <a href="#login" className={styles.uploadButton}>
+              Log in to save changes
+            </a>
+          </div>
+        ) : (
+          <div className={styles.profileActions}>
+            <label className={styles.uploadButton}>
+              Add photo
+              <input type="file" accept="image/*" onChange={uploadPhoto} />
+            </label>
+            <button onClick={saveAccount}>{saved || "Save changes"}</button>
+          </div>
+        )}
       </header>
 
       <section className={styles.grid}>
@@ -267,7 +276,7 @@ export default function Account() {
 
         <OrderList />
 
-        <article className={styles.statCard}>
+        <article className={styles.statCard} id="login">
           <h2>Security</h2>
 
           {isLoggedIn ? (
