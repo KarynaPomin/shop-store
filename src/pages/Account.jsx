@@ -44,31 +44,45 @@ export default function Account() {
             ${user.surname?.charAt(0) || ""}`.toUpperCase();
   }, [user]);
 
+  const MEDIA_URL = process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "");
+
+  const uploadPhoto = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    const formData = new FormData();
+    formData.append("files", file);
+
+    try {
+      const { data: uploaded } = await makeRequest.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const fileId = uploaded[0].id;
+      const fileUrl = uploaded[0].url;
+
+      await makeRequest.put(`/users/${user.id}`, { photo: fileId });
+
+      updateUser("photo", `${MEDIA_URL}${fileUrl}`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const saveAccount = async () => {
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     try {
-      const { data } = await makeRequest.put(`/users/${user.id}`, user);
+      const { photo, id, ...editableFields } = user;
+      await makeRequest.put(`/users/${user.id}`, editableFields);
+      setSaved("Saved");
     } catch (err) {
       console.error(err);
+      setSaved("Error");
     }
 
-    setSaved("Saved");
     await delay(2000);
     setSaved("Save changes");
-  };
-
-  const uploadPhoto = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      updateUser("photo", reader.result);
-    };
-
-    reader.readAsDataURL(file);
   };
 
   const login = async (event) => {

@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { makeRequest } from "../makeRequest";
-import useFetch from "../hooks/useFetch";
 
 const AuthContext = createContext(null);
 
@@ -48,33 +47,35 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const MEDIA_URL = process.env.REACT_APP_API_UPLOAD_URL;
 
   async function syncUserWithStrapi(account) {
-    const check = await fetch(
-      `${API_URL}/users?filters[email][$eq]=${account.email}`,
+    const { data: users } = await makeRequest.get(
+      `/users?filters[email][$eq]=${account.email}&populate=photo`,
     );
-
-    const users = await check.json();
 
     if (users.length > 0) {
       return users[0];
     }
 
-    const response = await fetch(`${API_URL}/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const randomPassword = crypto.randomUUID();
+
+    try {
+      const { data: newUser } = await makeRequest.post("/users", {
         username: account.username,
         email: account.email,
+        password: randomPassword,
         provider: "google",
         confirmed: true,
-      }),
-    });
+        role: 1,
+      });
 
-    return await response.json();
+      return newUser;
+    } catch (error) {
+      console.log(error.response?.data);
+
+      return;
+    }
   }
 
   const loginWithGoogle = async (credentialResponse) => {
@@ -85,66 +86,58 @@ export function AuthProvider({ children }) {
       surname: profile.family_name,
       username: profile.email.split("@")[0],
       email: profile.email,
-      photo: profile.picture,
     };
 
     const strapiUser = await syncUserWithStrapi(account);
 
     setUser({
       ...account,
-      strapiId: strapiUser.id,
+      id: strapiUser.id,
+      photo: strapiUser.photo?.url
+        ? `${MEDIA_URL}${strapiUser.photo.url}`
+        : profile.picture,
     });
 
-    setSession({
-      loggedIn: true,
-      email: profile.email,
-      provider: "google",
-    });
+    setSession({ loggedIn: true, email: profile.email, provider: "google" });
   };
 
   const loginWithEmail = async (email, password) => {
     try {
       const { data: users } = await makeRequest.get(
-        `users?filters[email][$eq]=${email}`,
+        `/users?filters[email][$eq]=${email}`,
       );
 
-      if (users.length > 0) {
-        const { data } = await makeRequest.post("/auth/local", {
-          identifier: email,
-          password,
-        });
+      const authData =
+        users.length > 0
+          ? (
+              await makeRequest.post("/auth/local", {
+                identifier: email,
+                password,
+              })
+            ).data
+          : (
+              await makeRequest.post("/auth/local/register", {
+                username: email.split("@")[0],
+                email,
+                password,
+              })
+            ).data;
 
-        setUser(data.user);
+      const { data: fullUser } = await makeRequest.get(
+        `/users/${authData.user.id}?populate=photo`,
+      );
 
-        setSession({
-          loggedIn: true,
-          email,
-          provider: "email",
-        });
-
-        return;
-      }
-
-      const { data } = await makeRequest.post("/auth/local/register", {
-        username: email.split("@")[0],
-        email,
-        password,
+      setUser({
+        ...fullUser,
+        photo: fullUser.photo?.url ? `${MEDIA_URL}${fullUser.photo.url}` : null,
       });
 
-      setUser(data.user);
-
-      setSession({
-        loggedIn: true,
-        email,
-        provider: "email",
-      });
+      setSession({ loggedIn: true, email, provider: "email" });
     } catch (err) {
       console.error(err);
-
       if (err.response?.data?.error?.message) {
         throw new Error(err.response.data.error.message);
       }
-
       throw new Error("Authentication failed.");
     }
   };
