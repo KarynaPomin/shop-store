@@ -102,44 +102,48 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithEmail = async (email, password) => {
-    try {
-      const { data: users } = await makeRequest.get(
-        `/users?filters[email][$eq]=${email}`,
-      );
+    const { data: authData } = await makeRequest.post("/auth/local", {
+      identifier: email,
+      password,
+    });
 
-      const authData =
-        users.length > 0
-          ? (
-              await makeRequest.post("/auth/local", {
-                identifier: email,
-                password,
-              })
-            ).data
-          : (
-              await makeRequest.post("/auth/local/register", {
-                username: email.split("@")[0],
-                email,
-                password,
-              })
-            ).data;
+    const { data: fullUser } = await makeRequest.get(
+      `/users/${authData.user.id}?populate=photo`,
+    );
 
-      const { data: fullUser } = await makeRequest.get(
-        `/users/${authData.user.id}?populate=photo`,
-      );
+    setUser({
+      ...fullUser,
+      photo: fullUser.photo?.url ? `${MEDIA_URL}${fullUser.photo.url}` : null,
+    });
 
-      setUser({
-        ...fullUser,
-        photo: fullUser.photo?.url ? `${MEDIA_URL}${fullUser.photo.url}` : null,
-      });
+    setSession({
+      loggedIn: true,
+      email,
+      provider: "email",
+    });
+  };
 
-      setSession({ loggedIn: true, email, provider: "email" });
-    } catch (err) {
-      console.error(err);
-      if (err.response?.data?.error?.message) {
-        throw new Error(err.response.data.error.message);
-      }
-      throw new Error("Authentication failed.");
-    }
+  const registerWithEmail = async (email, password) => {
+    const { data: authData } = await makeRequest.post("/auth/local/register", {
+      username: email.split("@")[0],
+      email,
+      password,
+    });
+
+    const { data: fullUser } = await makeRequest.get(
+      `/users/${authData.user.id}?populate=photo`,
+    );
+
+    setUser({
+      ...fullUser,
+      photo: fullUser.photo?.url ? `${MEDIA_URL}${fullUser.photo.url}` : null,
+    });
+
+    setSession({
+      loggedIn: true,
+      email,
+      provider: "email",
+    });
   };
 
   const logout = () => {
@@ -172,6 +176,7 @@ export function AuthProvider({ children }) {
         isLoggedIn: session.loggedIn,
         loginWithGoogle,
         loginWithEmail,
+        registerWithEmail,
         logout,
         updateUser,
       }}

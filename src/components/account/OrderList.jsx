@@ -45,8 +45,9 @@ export const OrderList = () => {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const { data: orders, loading } = useFetch(
-    `orders?filters[user][$eq]=${user?.id}&populate[order_items][populate][product][populate]=images` ??
-      null,
+    user
+      ? `orders?filters[user][$eq]=${user?.id}&populate[order_items][populate][product][populate]=images`
+      : null,
   );
   const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 

@@ -22,9 +22,12 @@ export default function Account() {
     isLoggedIn,
     loginWithGoogle,
     loginWithEmail,
+    registerWithEmail,
     logout,
     updateUser,
   } = useAuth();
+
+  const [isRegister, setIsRegister] = useState(false);
 
   const [loginUsername, setLoginUsername] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
@@ -90,40 +93,22 @@ export default function Account() {
 
     const email = loginEmail.trim();
     const password = loginPassword.trim();
-    const passwordRepeat = loginPasswordRepeat.trim();
-
-    if (!email) {
-      setAuthMessage("Email is required.");
-      return;
-    }
-
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setAuthMessage("Enter a valid email address.");
-      return;
-    }
-
-    if (!password) {
-      setAuthMessage("Password is required.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setAuthMessage("Password must be at least 6 characters.");
-      return;
-    }
-
-    if (password !== passwordRepeat) {
-      setAuthMessage("Passwords do not match.");
-      return;
-    }
 
     try {
-      await loginWithEmail(email, password);
-      setAuthMessage("Account created successfully.");
+      if (isRegister) {
+        if (password !== loginPasswordRepeat.trim()) {
+          setAuthMessage("Passwords do not match.");
+          return;
+        }
+
+        await registerWithEmail(email, password);
+        setAuthMessage("Account created.");
+      } else {
+        await loginWithEmail(email, password);
+        setAuthMessage("Logged in.");
+      }
     } catch (err) {
-      setAuthMessage(
-        err.response?.data?.error?.message || "Registration failed.",
-      );
+      setAuthMessage(err.message);
     }
   };
 
@@ -315,23 +300,40 @@ export default function Account() {
                 />
               </label>
 
-              <label>
-                Repeat password
-                <input
-                  type="password"
-                  value={loginPasswordRepeat}
-                  onChange={(e) => setLoginPasswordRepeat(e.target.value)}
-                  placeholder="Password repeat"
-                  minLength={6}
-                  required
-                />
-              </label>
-              <button type="submit">Log in</button>
+              {isRegister && (
+                <label>
+                  Repeat password
+                  <input
+                    type="password"
+                    value={loginPasswordRepeat}
+                    onChange={(e) => setLoginPasswordRepeat(e.target.value)}
+                    placeholder="Repeat password"
+                    minLength={6}
+                    required
+                  />
+                </label>
+              )}
+              <button type="submit">
+                {isRegister ? "Register" : "Log in"}
+              </button>
 
               <GoogleLogin
                 onSuccess={loginWithGoogle}
                 onError={() => setAuthMessage("Google login failed")}
               />
+
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => {
+                  setIsRegister((prev) => !prev);
+                  setAuthMessage("");
+                }}
+              >
+                {isRegister
+                  ? "Already have an account? Log in"
+                  : "Don't have an account? Register"}
+              </button>
             </form>
           )}
 
