@@ -9,6 +9,7 @@ import { currency } from "../utils/format.js";
 import styles from "./Checkout.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import { makeRequest } from "../makeRequest.js";
+import { loadStripe } from "@stripe/stripe-js";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -19,7 +20,7 @@ const schema = z.object({
   payment: z.enum(["PayPal", "BLIK", "Credit Card", "Cash on delivery"]),
 });
 
-export default function Checkout() {
+export default function Checkout({ products }) {
   const navigate = useNavigate();
   const { state, cartTotals, clearCart } = useStore();
 
@@ -40,7 +41,39 @@ export default function Checkout() {
     },
   });
 
+  const stripePromise = loadStripe(
+    "pk_test_51TtRFTILoOxB2uNRYqH2pZ8fVIbjkfEXR7RRCvB7mTuxsQOj62l7nfnq3VZq6dJ5gE7XrQJ9BTFbcNidnEZLGoip00AacHbBQv",
+  );
+
+  const handlePayment = async (orderId) => {
+    try {
+      const stripe = await stripePromise;
+      const res = await makeRequest.post("/orders/checkout", { orderId });
+      await stripe.redirectToCheckout({ sessionId: res.data.stripeSession.id });
+    } catch (error) {
+      console.error(error);
+      console.log(error.response?.data);
+      alert("Payment could not be started.");
+    }
+  };
+
   const onSubmit = async (e) => {
+    console.log({
+      orderId: `ORD-${Date.now()}`,
+      createAt: new Date().toISOString(),
+      totalPrice: cartTotals.total,
+      statusOrder: "waiting",
+      shippingAdress: e.address,
+      paymentMethod: e.payment,
+      delivery: e.delivery,
+      user: user?.id,
+      discount: cartTotals.discount,
+      notes: "",
+      email: e.email,
+    });
+
+    console.log(makeRequest.defaults.baseURL);
+
     try {
       const { data: order } = await makeRequest.post("/orders", {
         data: {
@@ -73,14 +106,13 @@ export default function Checkout() {
         });
       }
 
-      alert("Order send!");
+      await handlePayment(orderId);
     } catch (err) {
       console.error(err);
       console.log(err.response?.data);
+      alert("Something went wrong placing your order.");
+      return;
     }
-
-    clearCart({ type: "CLEAR_CART" });
-    navigate("/confirmation");
   };
 
   return (

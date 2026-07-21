@@ -82,12 +82,6 @@
         "audios"
       ]
     },
-    "orders": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::order.order",
-      "mappedBy": "user"
-    },
     "favorite_items": {
       "type": "relation",
       "relation": "oneToMany",
@@ -97,6 +91,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::cart-item.cart-item",
+      "mappedBy": "user"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
       "mappedBy": "user"
     }
   }

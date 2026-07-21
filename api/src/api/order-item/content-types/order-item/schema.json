@@ -23,16 +23,16 @@
     "color": {
       "type": "string"
     },
-    "order": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::order.order",
-      "inversedBy": "order_items"
-    },
     "product": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
+      "inversedBy": "order_items"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
       "inversedBy": "order_items"
     }
   }
