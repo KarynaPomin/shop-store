@@ -5,7 +5,11 @@
 import { factories } from "@strapi/strapi";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_KEY as string);
+if (!process.env.STRIPE_KEY) {
+  throw new Error("STRIPE_KEY is missing");
+}
+
+const stripe = new Stripe(process.env.STRIPE_KEY);
 
 export default factories.createCoreController(
   "api::order.order",
