@@ -82,7 +82,9 @@ export default function ProductPage() {
 
     setImage(product.images?.[0] || null);
     setSize(product.sizes?.[0] || null);
-    setColor(product.colors?.[0] || null);
+    setColor(product.colors?.colors?.[0]?.name || null);
+
+    console.log(product);
   }, [product]);
 
   if (loading || !product) return <div>Loading...</div>;

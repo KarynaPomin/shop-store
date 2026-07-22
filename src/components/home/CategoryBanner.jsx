@@ -1,14 +1,11 @@
-import { useState } from 'react';
-import { categories } from '../../data/catalog.js';
-import styles from './CategoryBanner.module.css';
+import { useState } from "react";
+import { categories } from "../../data/catalog.js";
+import styles from "./CategoryBanner.module.css";
 
-export default function CategoryBanner({ activeCategory = 'woman' }) {
-  const safeDefault = categories?.woman ? 'woman' : Object.keys(categories)[0];
+export default function CategoryBanner({ activeCategory = "woman" }) {
+  const safeDefault = categories?.woman ? "woman" : Object.keys(categories)[0];
 
-  const [active, setActive] = useState(
-    categories?.[activeCategory] ? activeCategory : safeDefault
-  );
-
+  const active = categories?.[activeCategory] ? activeCategory : safeDefault;
   const category = categories?.[active];
 
   if (!category) return null;
@@ -25,7 +22,9 @@ export default function CategoryBanner({ activeCategory = 'woman' }) {
         <div>
           <span>Clothes for</span>
           <h2>{category.label}</h2>
-          <a href={`#section-${active}`} className="button buttonLight">Explore now</a>
+          <a href={`#section-${active}`} className="button buttonLight">
+            Explore now
+          </a>
         </div>
         <img src={category.hero} alt={`${category.label} banner`} />
       </div>

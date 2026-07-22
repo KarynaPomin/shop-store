@@ -9,10 +9,9 @@ import styles from "./Dashboard.module.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { OrderList } from "../components/account/OrderList.jsx";
 import { makeRequest } from "../makeRequest.js";
-import { delay } from "motion-dom";
 
 export default function Account() {
-  const { data, loading, error } = useFetch("products?populate=*");
+  const { data } = useFetch("products?populate=*");
 
   const { state } = useStore();
   const { theme, setTheme } = useTheme();
@@ -29,16 +28,11 @@ export default function Account() {
 
   const [isRegister, setIsRegister] = useState(false);
 
-  const [loginUsername, setLoginUsername] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginPasswordRepeat, setLoginPasswordRepeat] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [saved, setSaved] = useState("");
-
-  const wishlist = (data || []).filter((product) =>
-    state.wishlist.includes(product.id),
-  );
 
   const initials = useMemo(() => {
     if (!user) return "GU";

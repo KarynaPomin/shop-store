@@ -9,7 +9,6 @@ import { currency } from "../utils/format.js";
 import styles from "./Checkout.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import { makeRequest } from "../makeRequest.js";
-import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 
 const schema = z.object({
@@ -44,10 +43,6 @@ export default function Checkout() {
       paymentMethod: "cash",
     },
   });
-
-  const stripePromise = loadStripe(
-    "pk_test_51TtRFTILoOxB2uNRYqH2pZ8fVIbjkfEXR7RRCvB7mTuxsQOj62l7nfnq3VZq6dJ5gE7XrQJ9BTFbcNidnEZLGoip00AacHbBQv",
-  );
 
   const handlePayment = async (orderId) => {
     try {
@@ -104,7 +99,7 @@ export default function Checkout() {
       );
 
       if (e.payment === "PayPal") {
-        setCreatedOrder(order.data); // тут order.data.totalPrice вже є
+        setCreatedOrder(order.data);
       } else {
         navigate(`/order-confirmation/${order.data.documentId}`);
       }

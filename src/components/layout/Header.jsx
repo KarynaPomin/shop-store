@@ -1,28 +1,28 @@
-import CloseIcon from '@mui/icons-material/Close';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import MenuIcon from '@mui/icons-material/Menu';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { useStore } from '../../context/StoreContext.jsx';
-import { useTheme } from '../../context/ThemeContext.jsx';
-import { asset } from '../../data/catalog.js';
-import useFetch from '../../hooks/useFetch.js';
-import styles from './Header.module.css';
+import CloseIcon from "@mui/icons-material/Close";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
+import SearchIcon from "@mui/icons-material/Search";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { useStore } from "../../context/StoreContext.jsx";
+import { useTheme } from "../../context/ThemeContext.jsx";
+import { asset } from "../../data/catalog.js";
+import useFetch from "../../hooks/useFetch.js";
+import styles from "./Header.module.css";
 
 const menuIcons = {
-  'Show full catalog': asset('icons/categorise.png'),
-  'Coats and parkas': asset('icons/jacket.png'),
-  Jackets: asset('icons/jacket-woman.png'),
-  Dresses: asset('icons/dress.png'),
-  Bluzy: asset('icons/hoodie.png'),
-  Jeans: asset('icons/jeans.png'),
-  Sweatpants: asset('icons/soccer-jersey.png'),
+  "Show full catalog": asset("icons/categorise.png"),
+  "Coats and parkas": asset("icons/jacket.png"),
+  Jackets: asset("icons/jacket-woman.png"),
+  Dresses: asset("icons/dress.png"),
+  Bluzy: asset("icons/hoodie.png"),
+  Jeans: asset("icons/jeans.png"),
+  Sweatpants: asset("icons/soccer-jersey.png"),
 };
 
 function capitalizeFirstLetter(str) {
@@ -59,7 +59,7 @@ export default function Header() {
   const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const likedCount = state.wishlist.length;
 
-  const { data, loading, error } = useFetch("categories?populate=*");
+  const { data } = useFetch("categories?populate=*");
 
   const nav = (
     <>
@@ -76,9 +76,7 @@ export default function Header() {
           </NavLink>
 
           <AnimatePresence>
-            {openMenu === category.id && (
-              <MegaMenu category={category} />
-            )}
+            {openMenu === category.id && <MegaMenu category={category} />}
           </AnimatePresence>
         </div>
       ))}
@@ -89,12 +87,22 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <Link className={styles.logo} to="/">SHOP STORE</Link>
+      <Link className={styles.logo} to="/">
+        SHOP STORE
+      </Link>
       <nav className={styles.desktopNav}>{nav}</nav>
       <div className={styles.actions}>
-        <Link to="/account" aria-label="Account"><PersonOutlineIcon /></Link>
-        <button aria-label="Search"><SearchIcon /></button>
-        <Link className={styles.badgedIcon} to="/wishlist" aria-label="Liked clothes">
+        <Link to="/account" aria-label="Account">
+          <PersonOutlineIcon />
+        </Link>
+        <button aria-label="Search">
+          <SearchIcon />
+        </button>
+        <Link
+          className={styles.badgedIcon}
+          to="/wishlist"
+          aria-label="Liked clothes"
+        >
           <FavoriteBorderIcon />
           {likedCount > 0 && <span>{likedCount}</span>}
         </Link>
@@ -103,9 +111,17 @@ export default function Header() {
           {count > 0 && <span>{count}</span>}
         </Link>
         <button onClick={toggleTheme} aria-label="Toggle theme">
-          {theme === 'dark' ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
+          {theme === "dark" ? (
+            <LightModeOutlinedIcon />
+          ) : (
+            <DarkModeOutlinedIcon />
+          )}
         </button>
-        <button className={styles.mobileToggle} onClick={() => setMobileOpen((value) => !value)} aria-label="Menu">
+        <button
+          className={styles.mobileToggle}
+          onClick={() => setMobileOpen((value) => !value)}
+          aria-label="Menu"
+        >
           {mobileOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
       </div>
@@ -114,7 +130,7 @@ export default function Header() {
           <motion.nav
             className={styles.mobileNav}
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
           >
             {nav}

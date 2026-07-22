@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import styles from "./ReviewsCard.module.css";
 
-import Icon from "@mui/material/Icon";
 import { makeRequest } from "../../makeRequest";
 import StarIcon from "@mui/icons-material/Star";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
