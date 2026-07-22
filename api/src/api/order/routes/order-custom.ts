@@ -4,7 +4,9 @@ export default {
       method: "POST",
       path: "/orders/checkout",
       handler: "order.checkout",
-      config: { policies: [] },
+      config: {
+        auth: false,
+      },
     },
   ],
 };

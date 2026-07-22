@@ -10,6 +10,7 @@ import styles from "./Checkout.module.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import { makeRequest } from "../makeRequest.js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useState } from "react";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -20,11 +21,14 @@ const schema = z.object({
   payment: z.enum(["PayPal", "BLIK", "Credit Card", "Cash on delivery"]),
 });
 
-export default function Checkout({ products }) {
+export default function Checkout() {
   const navigate = useNavigate();
   const { state, cartTotals, clearCart } = useStore();
 
   const { user, session, isLoggedIn } = useAuth();
+
+  const [createdOrder, setCreatedOrder] = useState(null);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
   const {
     register,
@@ -47,34 +51,25 @@ export default function Checkout({ products }) {
 
   const handlePayment = async (orderId) => {
     try {
-      const stripe = await stripePromise;
-      const res = await makeRequest.post("/orders/checkout", { orderId });
-      await stripe.redirectToCheckout({ sessionId: res.data.stripeSession.id });
+      const res = await makeRequest.post("/orders/checkout", {
+        orderId,
+      });
+
+      window.location.href = res.data.stripeSession.url;
     } catch (error) {
       console.error(error);
       console.log(error.response?.data);
-      alert("Payment could not be started.");
     }
   };
 
+  const startPayment = async () => {
+    await handlePayment(createdOrder.orderId);
+  };
+
   const onSubmit = async (e) => {
-    console.log({
-      orderId: `ORD-${Date.now()}`,
-      createAt: new Date().toISOString(),
-      totalPrice: cartTotals.total,
-      statusOrder: "waiting",
-      shippingAdress: e.address,
-      paymentMethod: e.payment,
-      delivery: e.delivery,
-      user: user?.id,
-      discount: cartTotals.discount,
-      notes: "",
-      email: e.email,
-    });
-
-    console.log(makeRequest.defaults.baseURL);
-
     try {
+      setIsCreatingOrder(true);
+
       const { data: order } = await makeRequest.post("/orders", {
         data: {
           orderId: `ORD-${Date.now()}`,
@@ -91,27 +86,33 @@ export default function Checkout({ products }) {
         },
       });
 
-      const orderId = order.data.id;
+      const orderDatabaseId = order.data.documentId;
 
-      for (const item of state.cart) {
-        await makeRequest.post("/order-items", {
-          data: {
-            quantity: item.quantity,
-            price: item.salePrice || item.price,
-            size: item.size,
-            color: item.color,
-            product: item.id,
-            order: orderId,
-          },
-        });
+      await Promise.all(
+        state.cart.map((item) =>
+          makeRequest.post("/order-items", {
+            data: {
+              quantity: item.quantity,
+              price: item.salePrice || item.price,
+              size: item.size,
+              color: item.color,
+              product: item.documentId,
+              order: orderDatabaseId,
+            },
+          }),
+        ),
+      );
+
+      if (e.payment === "PayPal") {
+        setCreatedOrder(order.data); // тут order.data.totalPrice вже є
+      } else {
+        navigate(`/order-confirmation/${order.data.documentId}`);
       }
-
-      await handlePayment(orderId);
+      clearCart();
     } catch (err) {
       console.error(err);
-      console.log(err.response?.data);
-      alert("Something went wrong placing your order.");
-      return;
+    } finally {
+      setIsCreatingOrder(false);
     }
   };
 
@@ -180,23 +181,42 @@ export default function Checkout({ products }) {
         </section>
         <aside className={styles.summary}>
           <h2>Order summary</h2>
-          {state.cart.map((item) => (
-            <p key={item.cartId}>
-              <span>
-                {item.quantity} x {item.name}
-              </span>
-              <strong>
-                {currency((item.salePrice || item.price) * item.quantity)}
-              </strong>
-            </p>
-          ))}
+          {!createdOrder &&
+            state.cart.map((item) => (
+              <p key={item.cartId}>
+                <span>
+                  {item.quantity} x {item.name}
+                </span>
+                <strong>
+                  {currency((item.salePrice || item.price) * item.quantity)}
+                </strong>
+              </p>
+            ))}
           <p className={styles.total}>
             <span>Total</span>
-            <strong>{currency(cartTotals.total)}</strong>
+            <strong>
+              {currency(
+                createdOrder ? createdOrder.totalPrice : cartTotals.total,
+              )}
+            </strong>
           </p>
-          <button className="button buttonDark" type="submit">
-            Confirm order
-          </button>
+          {!createdOrder ? (
+            <button
+              className="button buttonDark"
+              type="submit"
+              disabled={isCreatingOrder}
+            >
+              {isCreatingOrder ? "Creating order..." : "Confirm order"}
+            </button>
+          ) : (
+            <button
+              className="button buttonDark"
+              type="button"
+              onClick={startPayment}
+            >
+              Pay with PayPal
+            </button>
+          )}
         </aside>
       </form>
     </Page>

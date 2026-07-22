@@ -91,11 +91,7 @@ export default function Cart() {
             <span>Total</span>
             <strong>{currency(cartTotals.total)}</strong>
           </p>
-          <Link
-            to="/checkout"
-            className="button buttonDark"
-            products={state.cart}
-          >
+          <Link to="/checkout" className="button buttonDark">
             Checkout
           </Link>
           <Link to="/new" className="button buttonLight">

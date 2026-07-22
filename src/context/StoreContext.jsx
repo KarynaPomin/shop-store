@@ -22,7 +22,6 @@ function reducer(state, action) {
   switch (action.type) {
     case "ADD_TO_CART": {
       const cartId = `${action.product.id}-${action.size}-${action.color}`;
-
       const existing = state.cart.find((item) => item.cartId === cartId);
 
       if (existing) {
@@ -43,6 +42,7 @@ function reducer(state, action) {
           {
             cartId,
             id: action.product.id,
+            documentId: action.product.documentId,
             name: action.product.name,
             price: action.product.price,
             salePrice: action.product.salePrice,
@@ -178,6 +178,7 @@ export function StoreProvider({ children }) {
       cart: res.data.cart_items.map((item) => ({
         cartId: item.documentId,
         id: item.product.id,
+        documentId: item.product.documentId,
         name: item.product.name,
         price: item.product.price,
         salePrice: item.product.salePrice,
@@ -267,10 +268,16 @@ export function StoreProvider({ children }) {
       coupon,
     });
 
-  const clearCart = () =>
-    dispatch({
-      type: "CLEAR_CART",
-    });
+  const clearCart = async () => {
+    if (user) {
+      await Promise.all(
+        state.cart.map((item) =>
+          makeRequest.delete(`/cart-items/${item.cartId}`),
+        ),
+      );
+    }
+    dispatch({ type: "CLEAR_CART" });
+  };
 
   const value = useMemo(
     () => ({

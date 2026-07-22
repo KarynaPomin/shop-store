@@ -19,33 +19,44 @@ export default factories.createCoreController(
       }
 
       try {
-        const order = (await strapi.entityService.findOne(
+        const orders = (await strapi.entityService.findMany(
           "api::order.order",
-          orderId,
           {
+            filters: {
+              orderId,
+            },
             populate: {
               order_items: {
                 populate: {
-                  product: true,
+                  product: {
+                    populate: ["images"],
+                  },
                 },
               },
             },
           },
         )) as any;
 
+        const order = orders[0];
+
         if (!order || !order.order_items?.length) {
           ctx.response.status = 404;
           return { error: "Order not found or has no items" };
         }
 
-        const lineItems = order.order_items.map((item) => ({
-          price_data: {
-            currency: "usd",
-            product_data: { name: item.product.title },
-            unit_amount: Math.round(item.price * 100),
-          },
-          quantity: item.quantity,
-        }));
+        const lineItems = order.order_items.map((item: any) => {
+          if (!item.product) {
+            throw new Error(`order_item ${item.id} has no linked product`);
+          }
+          return {
+            price_data: {
+              currency: "usd",
+              product_data: { name: item.product.name },
+              unit_amount: Math.round(item.price * 100),
+            },
+            quantity: item.quantity,
+          };
+        });
 
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
