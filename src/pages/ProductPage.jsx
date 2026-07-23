@@ -16,7 +16,6 @@ import useFetch from "../hooks/useFetch.js";
 import { currency } from "../utils/format.js";
 import styles from "./ProductPage.module.css";
 import { ReviewsCard } from "../components/product/ReviewsCard.jsx";
-import SizeGuide from "./SizeGuide.jsx";
 
 const handleShare = async () => {
   try {

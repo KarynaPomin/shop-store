@@ -1,10 +1,8 @@
 import { useMemo, useState } from "react";
 import Page from "../components/common/Page.jsx";
 import Seo from "../components/common/Seo.jsx";
-import { useStore } from "../context/StoreContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
-import useFetch from "../hooks/useFetch.js";
 import styles from "./Dashboard.module.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { OrderList } from "../components/account/OrderList.jsx";
