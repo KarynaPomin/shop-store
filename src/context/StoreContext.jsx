@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -113,50 +114,13 @@ function reducer(state, action) {
 export function StoreProvider({ children }) {
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      getCart();
-      getFavorites();
-    }
-  }, [user]);
-
   const [state, dispatch] = useReducer(
     reducer,
     initialState,
     () => JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialState,
   );
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
-
-  const cartTotals = useMemo(() => {
-    const subtotal = state.cart.reduce(
-      (sum, item) => sum + (item.salePrice || item.price) * item.quantity,
-      0,
-    );
-
-    const coupons = {
-      STYLE10: 0.1,
-    };
-
-    const discountPercent = coupons[state.coupon.trim().toUpperCase()] || 0;
-
-    const discount = subtotal * discountPercent;
-
-    const shipping = subtotal === 0 ? 0 : subtotal - discount > 120 ? 0 : 12;
-
-    const total = subtotal - discount + shipping;
-
-    return {
-      subtotal,
-      discount,
-      shipping,
-      total,
-    };
-  }, [state.cart, state.coupon]);
-
-  const getCart = async () => {
+  const getCart = useCallback(async () => {
     if (!user) return;
 
     const res = await makeRequest.get(`/users/${user.id}`, {
@@ -188,50 +152,9 @@ export function StoreProvider({ children }) {
         color: item.color,
       })),
     });
-  };
+  }, [user]);
 
-  const addToCart = async (product, size, color, quantity = 1) => {
-    if (!user) {
-      dispatch({ type: "ADD_TO_CART", product, size, color, quantity });
-      return;
-    }
-
-    const existing = state.cart.find(
-      (item) =>
-        item.id === product.id && item.size === size && item.color === color,
-    );
-
-    if (existing) {
-      await makeRequest.put(`/cart-items/${existing.cartId}`, {
-        data: { quantity: existing.quantity + quantity },
-      });
-    } else {
-      await makeRequest.post(`/cart-items`, {
-        data: { user: user.id, product: product.id, quantity, size, color },
-      });
-    }
-
-    getCart();
-  };
-
-  const removeFromCart = async (cartId) => {
-    if (!user) {
-      dispatch({ type: "REMOVE_FROM_CART", cartId });
-      return;
-    }
-
-    await makeRequest.delete(`/cart-items/${cartId}`);
-    getCart();
-  };
-
-  const updateQuantity = (cartId, quantity) =>
-    dispatch({
-      type: "UPDATE_QUANTITY",
-      cartId,
-      quantity,
-    });
-
-  const getFavorites = async () => {
+  const getFavorites = useCallback(async () => {
     if (!user) return;
 
     const res = await makeRequest.get(
@@ -242,25 +165,114 @@ export function StoreProvider({ children }) {
       type: "SET_WISHLIST",
       wishlist: res.data.favorite_items.map((p) => p.id),
     });
-  };
+  }, [user]);
 
-  const toggleWishlist = async (productId) => {
-    if (!user) {
-      dispatch({ type: "TOGGLE_WISHLIST", id: productId });
-      return;
+  useEffect(() => {
+    if (user) {
+      getCart();
+      getFavorites();
     }
+  }, [user, getCart, getFavorites]);
 
-    const exists = state.wishlist.includes(productId);
-    const updated = exists
-      ? state.wishlist.filter((id) => id !== productId)
-      : [...state.wishlist, productId];
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state]);
 
-    await makeRequest.put(`/users/${user.id}`, {
-      favorite_items: updated,
+  const cartTotals = useMemo(() => {
+    const subtotal = state.cart.reduce(
+      (sum, item) => sum + (item.salePrice || item.price) * item.quantity,
+      0,
+    );
+
+    const coupons = {
+      STYLE10: 0.1,
+    };
+
+    const discountPercent = coupons[state.coupon.trim().toUpperCase()] || 0;
+
+    const discount = subtotal * discountPercent;
+
+    const shipping = subtotal === 0 ? 0 : subtotal - discount > 120 ? 0 : 12;
+
+    const total = subtotal - discount + shipping;
+
+    return {
+      subtotal,
+      discount,
+      shipping,
+      total,
+    };
+  }, [state.cart, state.coupon]);
+
+  const addToCart = useCallback(
+    async (product, size, color, quantity = 1) => {
+      if (!user) {
+        dispatch({ type: "ADD_TO_CART", product, size, color, quantity });
+        return;
+      }
+
+      const existing = state.cart.find(
+        (item) =>
+          item.id === product.id &&
+          item.size === size &&
+          item.color === color,
+      );
+
+      if (existing) {
+        await makeRequest.put(`/cart-items/${existing.cartId}`, {
+          data: { quantity: existing.quantity + quantity },
+        });
+      } else {
+        await makeRequest.post(`/cart-items`, {
+          data: { user: user.id, product: product.id, quantity, size, color },
+        });
+      }
+
+      getCart();
+    },
+    [user, state.cart, getCart],
+  );
+
+  const removeFromCart = useCallback(
+    async (cartId) => {
+      if (!user) {
+        dispatch({ type: "REMOVE_FROM_CART", cartId });
+        return;
+      }
+
+      await makeRequest.delete(`/cart-items/${cartId}`);
+      getCart();
+    },
+    [user, getCart],
+  );
+
+  const updateQuantity = (cartId, quantity) =>
+    dispatch({
+      type: "UPDATE_QUANTITY",
+      cartId,
+      quantity,
     });
 
-    dispatch({ type: "SET_WISHLIST", wishlist: updated });
-  };
+  const toggleWishlist = useCallback(
+    async (productId) => {
+      if (!user) {
+        dispatch({ type: "TOGGLE_WISHLIST", id: productId });
+        return;
+      }
+
+      const exists = state.wishlist.includes(productId);
+      const updated = exists
+        ? state.wishlist.filter((id) => id !== productId)
+        : [...state.wishlist, productId];
+
+      await makeRequest.put(`/users/${user.id}`, {
+        favorite_items: updated,
+      });
+
+      dispatch({ type: "SET_WISHLIST", wishlist: updated });
+    },
+    [user, state.wishlist],
+  );
 
   const setCoupon = (coupon) =>
     dispatch({
@@ -268,7 +280,7 @@ export function StoreProvider({ children }) {
       coupon,
     });
 
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     if (user) {
       await Promise.all(
         state.cart.map((item) =>
@@ -277,7 +289,7 @@ export function StoreProvider({ children }) {
       );
     }
     dispatch({ type: "CLEAR_CART" });
-  };
+  }, [user, state.cart]);
 
   const value = useMemo(
     () => ({
@@ -292,7 +304,7 @@ export function StoreProvider({ children }) {
       setCoupon,
       clearCart,
     }),
-    [state, cartTotals],
+    [state, cartTotals, addToCart, clearCart, removeFromCart, toggleWishlist],
   );
 
   return (
