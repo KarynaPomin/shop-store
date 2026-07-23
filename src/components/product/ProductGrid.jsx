@@ -1,20 +1,24 @@
-import { useEffect, useState } from 'react';
-import styles_app from '../../App.module.css';
-import useFetch from '../../hooks/useFetch.js';
-import ProductCard from './ProductCard.jsx';
-import styles from './ProductGrid.module.css';
+import { useEffect, useState } from "react";
+import styles_app from "../../App.module.css";
+import useFetch from "../../hooks/useFetch.js";
+import ProductCard from "./ProductCard.jsx";
+import styles from "./ProductGrid.module.css";
 
-export default function ProductGrid({ products, category, subCategory, collection, title = 'New Arrivals', subtitle = 'Explore our new clothes and collections for this season!' }) {
-  
+export default function ProductGrid({
+  products,
+  category,
+  subCategory,
+  collection,
+  title = "New Arrivals",
+  subtitle = "Explore our new clothes and collections for this season!",
+}) {
   let endpoint = "products?populate=*";
 
   if (collection === "new") {
     endpoint += `&filters[isNew][$eq]=true`;
-  }
-  else if (collection === "sale") {
+  } else if (collection === "sale") {
     endpoint += "&filters[salePrice][$notNull]=true";
-  }
-  else if (category && subCategory) {
+  } else if (category && subCategory) {
     endpoint += `&filters[categories][label][$eq]=${category}`;
     endpoint += `&filters[sub_categories][title][$eq]=${subCategory}`;
   } else if (category) {
@@ -28,19 +32,20 @@ export default function ProductGrid({ products, category, subCategory, collectio
   const data = products ?? productData;
   const isLoading = products ? false : loading;
   const hasError = products ? null : error;
-  
+
   const [isEmpty, setIsEmpty] = useState(false);
+
   useEffect(() => {
     setIsEmpty(Array.isArray(data) && data.length === 0);
   }, [data]);
 
   return (
-    <section className={styles.section}  id={`section-${category}`}>
+    <section className={styles.section} id={`section-${category}`}>
       <header>
         <h2>{title}</h2>
         <p>{subtitle}</p>
       </header>
-      
+
       {hasError ? (
         <div className={`${styles_app.state} ${styles_app.error}`}>
           Something went wrong.
@@ -49,7 +54,7 @@ export default function ProductGrid({ products, category, subCategory, collectio
         <div className={`${styles_app.state} ${styles_app.loading}`}>
           Loading products...
         </div>
-      ) : data?.length === 0 ? (
+      ) : isEmpty ? (
         <div className={`${styles_app.state} ${styles_app.empty}`}>
           No products found.
         </div>

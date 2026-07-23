@@ -1,0 +1,77 @@
+.guide {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.guideContent {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+}
+
+.guide h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.sizeTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.sizeTable th {
+  background: #111;
+  color: white;
+  padding: 16px;
+  font-weight: 600;
+}
+
+.sizeTable td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+:global([data-theme="dark"]) .sizeTable td {
+  color: #000000;
+}
+
+.sizeTable tr:last-child td {
+  border-bottom: none;
+}
+
+.sizeTable tbody tr:hover {
+  background: #f7f7f7;
+}
+
+.measure {
+  margin-top: 45px;
+  text-align: left;
+}
+
+.measure h2 {
+  margin-bottom: 15px;
+}
+
+.measure ul {
+  padding-left: 20px;
+}
+
+.measure li {
+  margin-bottom: 8px;
+}

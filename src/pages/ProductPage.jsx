@@ -16,6 +16,7 @@ import useFetch from "../hooks/useFetch.js";
 import { currency } from "../utils/format.js";
 import styles from "./ProductPage.module.css";
 import { ReviewsCard } from "../components/product/ReviewsCard.jsx";
+import SizeGuide from "./SizeGuide.jsx";
 
 const handleShare = async () => {
   try {
@@ -176,7 +177,7 @@ export default function ProductPage() {
               ))}
             </div>
 
-            <a href="#">Size guide</a>
+            <Link to="/size-guide">Size guide</Link>
           </fieldset>
 
           <label className={styles.qty}>

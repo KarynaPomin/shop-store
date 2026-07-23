@@ -8,6 +8,7 @@ import AppLayout from "./layouts/AppLayout.jsx";
 const Home = lazy(() => import("./pages/Home.jsx"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage.jsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.jsx"));
+const SizeGuide = lazy(() => import("./pages/SizeGuide.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Wishlist = lazy(() => import("./pages/Wishlist.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
@@ -27,6 +28,7 @@ function AppRoutes() {
         <Route path="/new" element={<CategoryPage collection="new" />} />
         <Route path="/sale" element={<CategoryPage collection="sale" />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/size-guide" element={<SizeGuide />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/checkout" element={<Checkout />} />

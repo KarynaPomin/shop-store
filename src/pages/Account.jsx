@@ -11,9 +11,6 @@ import { OrderList } from "../components/account/OrderList.jsx";
 import { makeRequest } from "../makeRequest.js";
 
 export default function Account() {
-  const { data } = useFetch("products?populate=*");
-
-  const { state } = useStore();
   const { theme, setTheme } = useTheme();
   const {
     user,

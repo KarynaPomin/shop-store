@@ -1,11 +1,11 @@
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import StarIcon from '@mui/icons-material/Star';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { useStore } from '../../context/StoreContext.jsx';
-import { currency } from '../../utils/format.js';
-import styles from './ProductCard.module.css';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import StarIcon from "@mui/icons-material/Star";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { useStore } from "../../context/StoreContext.jsx";
+import { currency } from "../../utils/format.js";
+import styles from "./ProductCard.module.css";
 
 const renderStars = (rating) => {
   return Array.from({ length: 5 }, (_, i) => {
@@ -29,7 +29,11 @@ export default function ProductCard({ product }) {
   const baseUrl = process.env.REACT_APP_API_UPLOAD_URL;
 
   return (
-    <motion.article className={styles.card} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
+    <motion.article
+      className={styles.card}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
+    >
       <Link to={`/product/${product.id}`} className={styles.media}>
         {product.images ? (
           <img
@@ -40,14 +44,17 @@ export default function ProductCard({ product }) {
         ) : (
           <img
             src="https://placehold.net/default.png"
-            alt="No image"
+            alt="Not found"
             loading="lazy"
           />
         )}
       </Link>
       <div className={styles.info}>
         <span>{product.name}</span>
-        <button onClick={() => toggleWishlist(product.id)} aria-label="Toggle favorite">
+        <button
+          onClick={() => toggleWishlist(product.id)}
+          aria-label="Toggle favorite"
+        >
           {wished ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </button>
         <Link to={`/product/${product.id}`}>{product.title}</Link>
@@ -57,7 +64,9 @@ export default function ProductCard({ product }) {
         </p>
         <div className={styles.rating}>
           {renderStars(product.rating)}
-          <span>{product.rating} ({product.reviews?.length} reviews)</span>
+          <span>
+            {product.rating} ({product.reviews?.length} reviews)
+          </span>
         </div>
       </div>
     </motion.article>
